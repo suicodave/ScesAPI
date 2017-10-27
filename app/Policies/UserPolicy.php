@@ -55,4 +55,8 @@ class UserPolicy
     {
         //
     }
+
+    public function IsSuperUser(User $user){
+        return $user->isSuperUser();
+    }
 }
