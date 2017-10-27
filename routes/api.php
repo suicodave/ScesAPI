@@ -18,3 +18,14 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('departments','DepartmentController');
+
+Route::post('admin','UserController@store');
+
+Route::fallback(function(){
+    return response()->json([
+        "message" => "link not found",
+        "routes" => [
+            route('departments.index')
+        ]
+    ],404);
+});
