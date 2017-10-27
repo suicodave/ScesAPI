@@ -30,4 +30,19 @@ class User extends Authenticatable
     public function role(){
         return $this->hasOne("App\Role","id","role_id");
     }
+    public function isSuperUser(){
+        return $this->role()->where("name","Super User")->exists();
+    }
+
+    public function isStudent(){
+        return $this->role()->where("name","Student")->exists();
+    }
+
+    public function isComelec(){
+        return $this->role()->where("name","Comelec Officer")->exists();
+    }
+
+    public function isRegistrar(){
+        return $this->role()->where("name","Registrar Officer")->exists();
+    }
 }
