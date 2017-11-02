@@ -13,19 +13,21 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
 
 Route::apiResource('departments','DepartmentController');
 
-Route::post('admin','UserController@store');
+
+Route::post('admin/login','AdminController@login');
+
+Route::get('/users',function(App\User $user){
+    return response()->json($user->all());
+})->middleware('jwtAuth');
+
 
 Route::fallback(function(){
     return response()->json([
-        "message" => "link not found",
-        "routes" => [
-            route('departments.index')
-        ]
+        "message" => "404 Resource Not Found",
+        
     ],404);
 });

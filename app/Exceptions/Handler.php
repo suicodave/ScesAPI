@@ -6,8 +6,9 @@ use Exception;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Auth\Access\AuthorizationException;
-
-
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 class Handler extends ExceptionHandler
 {
     /**
@@ -52,8 +53,21 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if($exception instanceof AuthorizationException){
+            if($request->wantsJson()){
+                return response()->json([
+                    "error" => "Unauthorized Action"
+                ],401);
+            }
             return redirect()->route("unauthorized");
+
         }
+
+        if($exception instanceof MethodNotAllowedHttpException ){
+            return response()->json([
+                "message" => "HTTP method is not available on this route."
+            ],404);
+        }
+
         return parent::render($request, $exception);
         
        
