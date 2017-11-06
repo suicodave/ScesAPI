@@ -5,10 +5,28 @@ namespace App;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
-class User extends Authenticatable
+use Tymon\JWTAuth\Contracts\JWTSubject;
+class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+    
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier() {
+        return $this->getKey(); // Eloquent Model method
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims() {
+        return [];
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -46,4 +64,10 @@ class User extends Authenticatable
     public function isRegistrar(){
         return $this->role()->where("name","Registrar Officer")->exists();
     }
+
+    public function adminProfile(){
+        return $this->hasOne("App\Admin","user_id","id");
+    }
+
+
 }

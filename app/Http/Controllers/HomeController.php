@@ -25,7 +25,7 @@ class HomeController extends Controller
      */
     public function index(User $user)
     {
-       $this->authorize('isSuperUser',$user);
+       //$this->authorize('isSuperUser',$user);
            
         
         

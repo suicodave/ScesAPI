@@ -20,9 +20,9 @@ class CreateAdminsTable extends Migration
             $table->string('first_name');
             $table->string('middle_name');
             $table->string('last_name');
-            $table->string('status');
-            $table->string("Gender");
-            $table->date('birthdate');
+            $table->string('status')->nullable();
+            $table->string("Gender")->nullable();
+            $table->date('birthdate')->nullable();
             $table->timestamps();
         });
     }

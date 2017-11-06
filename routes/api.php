@@ -13,16 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
-
-
-Route::apiResource('departments','DepartmentController');
-
-
-Route::post('admin/login','AdminController@login');
-
-Route::get('/users',function(App\User $user){
-    return response()->json($user->all());
-})->middleware('jwtAuth');
+/*
+|--------------------------------------------------------------------------
+| API Fallback
+|--------------------------------------------------------------------------
+|
+| Route for Not Found Errors
+|
+|
+*/
 
 
 Route::fallback(function(){
@@ -31,3 +30,36 @@ Route::fallback(function(){
         
     ],404);
 });
+
+/*
+|--------------------------------------------------------------------------
+| API Fallback End
+|--------------------------------------------------------------------------
+|
+*/
+
+
+
+
+
+
+Route::apiResource('departments','DepartmentController');
+
+Route::apiResource('admin','AdminController');
+
+Route::post('admin/login','AdminController@login');
+
+Route::get("test","AdminController@checkRoleUser");
+
+Route::get('/users',function(App\User $user){
+    $user = App\User::find(1);
+    return response()->json(
+        [
+            $user,
+            $user->role
+        ]
+        
+    );
+});
+
+

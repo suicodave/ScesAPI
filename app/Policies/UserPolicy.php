@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-
+use JWTAuth;
 class UserPolicy
 {
     use HandlesAuthorization;
@@ -16,9 +16,9 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function view(User $user, User $model)
+    public function view()
     {
-        //
+        return $this->isRegistrar() || $this->isSuperUser() ;
     }
 
     /**
@@ -56,7 +56,29 @@ class UserPolicy
         //
     }
 
-    public function IsSuperUser(User $user){
-        return $user->isSuperUser();
+
+
+    public function isSuperUser(){
+        $token = JWTAuth::toUser();
+        $user = User::with("role")->find($token)->first();
+        return ( $user->role->name == "Super User" );
+    }
+
+    public function isStudent(){
+        $token = JWTAuth::toUser();
+        $user = User::with("role")->find($token)->first();
+        return ( $user->role->name == "Student" );
+    }
+
+    public function isComelec(){
+        $token = JWTAuth::toUser();
+        $user = User::with("role")->find($token)->first();
+        return ( $user->role->name == "Comelec Officer" );
+    }
+
+    public function isRegistrar(){
+        $token = JWTAuth::toUser();
+        $user = User::with("role")->find($token)->first();
+        return ( $user->role->name == "Registrar Officer" );
     }
 }
