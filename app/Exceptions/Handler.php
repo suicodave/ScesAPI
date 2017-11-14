@@ -5,10 +5,12 @@ namespace App\Exceptions;
 use Exception;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Auth\Access\AuthorizationException;
+
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class Handler extends ExceptionHandler
 {
     /**
@@ -55,7 +57,8 @@ class Handler extends ExceptionHandler
         if($exception instanceof AuthorizationException){
             if($request->wantsJson()){
                 return response()->json([
-                    "error" => "Unauthorized User Action."
+                    "external_message" => "This user is not permitted to authorize this action.",
+                    "internal_message" => "Unauthorized action"
                 ],401);
             }
             return redirect()->route("unauthorized");
@@ -64,9 +67,19 @@ class Handler extends ExceptionHandler
 
         if($exception instanceof MethodNotAllowedHttpException ){
             return response()->json([
-                "message" => "HTTP method is not available on this route."
+                "external_message" => "The HTTP method used is not available for the requested data.",
+                "internal_message" => "Http method not allowed for this route."
             ],404);
         }
+
+        if($exception instanceof ModelNotFoundException ){
+            return response()->json([
+                "external_message" => "There are no results for the given data.",
+                "internal_data" => "Resource Not Found!"
+            ],404);
+        }
+
+        
 
         return parent::render($request, $exception);
         

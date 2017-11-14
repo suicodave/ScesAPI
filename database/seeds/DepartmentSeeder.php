@@ -12,8 +12,23 @@ class DepartmentSeeder extends Seeder
      */
     public function run()
     {
-        factory(Department::class, 4)->create()->each(function($u) {
-            $u->save();
-          });
+        
+        $roleCount = Department::all()->count();
+        
+        if($roleCount > 0 ){
+            $this->command->line("Departments are already seeded");
+        }else{
+            $departments = [
+                'Elementary',
+                'Junior High',
+                'Señor High',
+                'College'
+            ];
+            foreach ($departments as $key => $value) {
+                factory(Department::class)->create([
+                    "name" => $value
+                ]);
+            }
+        }
     }
 }

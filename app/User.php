@@ -69,5 +69,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne("App\Admin","user_id","id");
     }
 
+    public function registrarProfile(){
+        return $this->hasOne("App\Registrar","user_id","id");
+    }
+
+    
 
 }

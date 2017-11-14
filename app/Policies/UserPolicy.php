@@ -16,10 +16,22 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function view()
+    public function viewAdmin()
     {
-        return $this->isRegistrar() || $this->isSuperUser() ;
+        return $this->isRegistrar() || $this->isSuperUser();
     }
+
+    public function storeRegistrar(){
+        
+        return $this->isRegistrar() || $this->isSuperUser();
+    }
+
+    public function updateRegistrar(){
+        
+        return $this->isRegistrar();
+        
+    }
+
 
     /**
      * Determine whether the user can create models.

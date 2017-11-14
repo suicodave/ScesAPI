@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Role;
 use Illuminate\Http\Request;
-
+use JWTAuth;
 class UserController extends Controller
 {
     /**
@@ -61,16 +61,7 @@ class UserController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+    
 
     /**
      * Update the specified resource in storage.
@@ -94,4 +85,26 @@ class UserController extends Controller
     {
         //
     }
+
+
+    public function login(Request $request){
+        
+             $user = $request->only(["email","password"]);
+     
+             if(!$token=JWTAuth::attempt($user)){
+                 return response()->json([
+                     "message" => "Invalid credentials"
+                 ],401);
+             }
+             
+     
+             return response()->json($token);
+         }
+
+    public function image($id){
+        return $id;
+    }
+        
 }
+
+

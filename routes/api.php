@@ -45,21 +45,19 @@ Route::fallback(function(){
 
 Route::apiResource('departments','DepartmentController');
 
-Route::apiResource('admin','AdminController');
+Route::apiResource('admins','AdminController',['except'=>[
+    'store'
+]]);
 
-Route::post('admin/login','AdminController@login');
+Route::apiResource('registrars','RegistrarController');
+
+
+
 
 Route::get("test","AdminController@checkRoleUser");
 
-Route::get('/users',function(App\User $user){
-    $user = App\User::find(1);
-    return response()->json(
-        [
-            $user,
-            $user->role
-        ]
-        
-    );
+Route::group(["prefix"=>"users"],function(){
+    Route::post('login','UserController@login');
+    Route::get('images/{id}','UserController@image')->name('users.image') ;
 });
-
 

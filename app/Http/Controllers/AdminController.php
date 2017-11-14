@@ -12,7 +12,7 @@ class AdminController extends Controller
 {
 
     public function __construct(){
-        $this->middleware('jwtAuth')->except('login','checkRoleUser');
+        $this->middleware('jwtAuth');
     }
 
 
@@ -24,25 +24,19 @@ class AdminController extends Controller
      */
     public function index(User $user)
     {
-        $this->authorize('view',$user);
+        $this->authorize('viewAdmin',$user);
         $token = JWTAuth::toUser();
 
-        $user = User::with("role")->find($token)->first();
+        $user = User::with("adminProfile")->find($token)->first();
         
-
-      
         
         return response([
-            "user" => $user,
-            "is Student" => ($user->role->name == "Student" )
+            "user" => $user
+            
         ]);
     }
 
-    public function checkRoleUser(){
-        $checkExistingAdmin = Role::with("user")->where("name","Super User")->get();
-        return response()->json($checkExistingAdmin);
-    }
-   
+    
 
     /**
      * Store a newly created resource in storage.
@@ -92,7 +86,7 @@ class AdminController extends Controller
     }
 
     public function login(Request $request){
-   
+        
         $user = $request->only(["email","password"]);
 
         if(!$token=JWTAuth::attempt($user)){
