@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Registrar;
 use App\User;
+use App\Role;
 use App\Http\Resources\Registrar as RegistrarResource;
 use App\Http\Resources\RegistrarCollection;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class RegistrarController extends Controller
 {
 
     public function __construct(){
-        //$this->middleware('jwtAuth');
+        $this->middleware('jwtAuth');
     }
 
     /**
@@ -23,8 +24,14 @@ class RegistrarController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->has('items')) {
+            $items = $request->items;
+        }else{
+            $items = 5;
+        }
         
-        return new RegistrarCollection(Registrar::paginate($request->items));
+       
+        return new RegistrarCollection(Registrar::paginate($items));
     }
 
     
@@ -48,11 +55,14 @@ class RegistrarController extends Controller
             'middle_name' => 'required|max:15',
             'last_name' => 'required|max:15'
         ]);
+
+        $role = Role::where('name','Registrar Officer')->first();
         
         //set Registrar User Account
         $user = new User();
         $user->name =  ucwords($request->input('first_name'))." ".ucwords($request->input('last_name'));
         $user->email = $request->input('email');
+        $user->role_id = $role->id;
         $user->password = bcrypt($request->input('password'));
         $user->save();
 

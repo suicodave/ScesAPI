@@ -16,81 +16,54 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function viewAdmin()
+    public function viewAdmin() //registrar or superuser
     {
         return $this->isRegistrar() || $this->isSuperUser();
     }
 
-    public function storeRegistrar(){
+    public function storeRegistrar(){ // registrar or superuser
         
         return $this->isRegistrar() || $this->isSuperUser();
     }
 
-    public function updateRegistrar(){
+    public function updateRegistrar(){ //registrar only
         
         return $this->isRegistrar();
         
     }
 
-
-    /**
-     * Determine whether the user can create models.
-     *
-     * @param  \App\User  $user
-     * @return mixed
-     */
-    public function create(User $user)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
-     */
-    public function update(User $user, User $model)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
-     */
-    public function delete(User $user, User $model)
-    {
-        //
+    public function storeSchoolYear(){ //superuser only
+        return $this->isSuperUser();
     }
 
 
+   
+    
+    ##################################################
 
-    public function isSuperUser(){
-        $token = JWTAuth::toUser();
-        $user = User::with("role")->find($token)->first();
-        return ( $user->role->name == "Super User" );
+
+    private function isSuperUser(){
+        $user = JWTAuth::toUser();
+        return $user->isSuperUser();
+        
+        
     }
 
-    public function isStudent(){
-        $token = JWTAuth::toUser();
-        $user = User::with("role")->find($token)->first();
-        return ( $user->role->name == "Student" );
+    private function isStudent(){
+        $user = JWTAuth::toUser();
+        return $user->isStudent();
+        
     }
 
-    public function isComelec(){
-        $token = JWTAuth::toUser();
-        $user = User::with("role")->find($token)->first();
-        return ( $user->role->name == "Comelec Officer" );
+    private function isComelec(){
+        $user = JWTAuth::toUser();
+        return $user->isComelec();
+        
     }
 
-    public function isRegistrar(){
-        $token = JWTAuth::toUser();
-        $user = User::with("role")->find($token)->first();
-        return ( $user->role->name == "Registrar Officer" );
+    private function isRegistrar(){
+        $user = JWTAuth::toUser();
+        return $user->isRegistrar();
+        
     }
 }

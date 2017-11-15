@@ -97,8 +97,10 @@ class UserController extends Controller
                  ],401);
              }
              
-     
-             return response()->json($token);
+            
+             return response()->json([
+                 'token' => $token
+             ]);
          }
 
     public function image($id){

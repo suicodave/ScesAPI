@@ -40,10 +40,10 @@ Route::fallback(function(){
 
 
 
+//users and profiles
 
 
 
-Route::apiResource('departments','DepartmentController');
 
 Route::apiResource('admins','AdminController',['except'=>[
     'store'
@@ -54,10 +54,17 @@ Route::apiResource('registrars','RegistrarController');
 
 
 
-Route::get("test","AdminController@checkRoleUser");
-
 Route::group(["prefix"=>"users"],function(){
     Route::post('login','UserController@login');
     Route::get('images/{id}','UserController@image')->name('users.image') ;
 });
 
+
+
+//school settings
+
+Route::apiResource('departments','DepartmentController',['only'=>[
+    'index','show'
+]]);
+
+Route::apiResource('school_years','SchoolYearController');
