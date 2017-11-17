@@ -36,6 +36,18 @@ class UserPolicy
         return $this->isSuperUser();
     }
 
+    public function updateSchoolYear(){ //superuser only
+        return $this->isSuperUser();
+    }
+
+    public function deleteSchoolYear(){ //superuser only
+        return $this->isSuperUser();
+    }
+
+    public function restoreSchoolYear(){ //superuser only
+        return $this->isSuperUser();
+    }
+
 
    
     

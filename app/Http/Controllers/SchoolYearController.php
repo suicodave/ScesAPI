@@ -18,7 +18,11 @@ class SchoolYearController extends Controller
     private $orderValue = 'desc';
 
     public function __construct(){
+        
+        $this->middleware('ajaxOnly');
         $this->middleware('jwtAuth');
+        
+
     }
 
     /**
@@ -92,7 +96,26 @@ class SchoolYearController extends Controller
      */
     public function update(Request $request, SchoolYear $schoolYear)
     {
-        //
+        
+        $this->authorize('updateSchoolYear',User::class);
+
+        $request->validate([
+            'base' => 'required|unique:school_years|numeric|digits:4|max:2200'
+        ]);
+
+        $base = $request->input('base');
+        $endYear = $base + 1;
+        $schoolYearName = "$base - $endYear";
+        $oldSchoolYear = $schoolYear->name;    
+        $schoolYear->base = $request->input('base');
+        $schoolYear->name =$schoolYearName;
+        $schoolYear->save();
+
+        return (new SchoolYearResource($schoolYear))->additional([
+            'externalMesage' => "School Year $oldSchoolYear has been updated to $schoolYear->name.",
+            'internalMessage' => "School Year Updated."
+        ]);
+        
     }
 
     /**
@@ -103,6 +126,8 @@ class SchoolYearController extends Controller
      */
     public function destroy(SchoolYear $schoolYear)
     {
+        $this->authorize('deleteSchoolYear',User::class);
+
         $schoolYear->delete();
         return (new SchoolYearResource($schoolYear))->additional([
             'externalMessage' => "School Year $schoolYear->name has been deleted.",
@@ -133,6 +158,9 @@ class SchoolYearController extends Controller
     }
 
     public function restore(Request $request,$id){
+
+        $this->authorize('restoreSchoolYear',User::class);
+
         $restoreSubject = SchoolYear::onlyTrashed()->findOrFail($id);
         $restoreSubject->restore();
         return (new SchoolYearResource($restoreSubject))->additional([
