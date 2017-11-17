@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\SchoolYear;
 use App\User;
 use App\Http\Resources\SchoolYear as SchoolYearResource;
+use App\Http\Resources\SchoolYearCollection;
 use Illuminate\Http\Request;
 
 use JWTAuth;
 
 class SchoolYearController extends Controller
 {
+
+    private $items = 15;
+    private $orderBy = 'id';
+    private $orderValue = 'desc';
 
     public function __construct(){
         $this->middleware('jwtAuth');
@@ -21,9 +26,12 @@ class SchoolYearController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $items = $request->has('items') ? $request->items : $this->items ; 
+        $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
+        $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
+        return new SchoolYearCollection(SchoolYear::orderBy($orderBy,$orderValue)->paginate($items));
     }
 
     
@@ -39,40 +47,24 @@ class SchoolYearController extends Controller
         $this->authorize('storeSchoolYear',User::class);
 
         $request->validate([
-            'year' => 'required|max:4|min:4|'
+            'base' => 'required|unique:school_years|numeric|digits:4|max:2200'
         ]);
 
-        $yearStart = $request->input('year');
+        $yearStart = $request->input('base');
 
         $yearEnd = $yearStart +1;
 
         $stringSchoolYear = "$yearStart - $yearEnd";
 
         $schoolYear = new SchoolYear();
+        $schoolYear->base = $yearStart;
         $schoolYear->name = $stringSchoolYear;
         $schoolYear->save();      
         
         return (new SchoolYearResource($schoolYear))->additional([
             'externalMessage' => 'New School Year has been created.',
             'internalMessage' => 'School Year created.',
-            'profile' => route('school_years.show',$schoolYear->id),
-            'otherMethods' =>[
-                'POST' => [
-                    'link' => route('school_years.store'),
-                    'params' => ['name'],
-                    'purpose' => 'Create new School Year'
-                ],
-                'PUT' =>[
-                    'link' => route('school_years.show',$schoolYear->id),
-                    'params' => ['name'],
-                    'purpose' => 'Update  School Year'
-                ],
-                "DELETE" => [
-                    'link' => route('school_years.show',$schoolYear->id),
-                    'purpose' => 'Delete  School Year'
-                ]
-
-            ]
+            
 
         ]);
         
@@ -86,7 +78,7 @@ class SchoolYearController extends Controller
      */
     public function show(SchoolYear $schoolYear)
     {
-        //
+        return new SchoolYearResource($schoolYear);
     }
 
     
@@ -111,6 +103,41 @@ class SchoolYearController extends Controller
      */
     public function destroy(SchoolYear $schoolYear)
     {
-        //
+        $schoolYear->delete();
+        return (new SchoolYearResource($schoolYear))->additional([
+            'externalMessage' => "School Year $schoolYear->name has been deleted.",
+            'internalMessage' => 'School Year Deleted.',
+        ]);
+    }
+
+    //trashed index
+    public function trashedIndex(Request $request){
+
+        $items = $request->has('items') ? $request->items : $this->items ; 
+
+        $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
+
+        $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
+
+        return new SchoolYearCollection(SchoolYear::onlyTrashed()->orderBy($orderBy,$orderValue)->paginate($items));
+       // return $this->items;
+    }
+
+
+    //show trashed SY
+    public function showTrashed($id){
+        
+        return response()->json(
+            SchoolYear::onlyTrashed()->findorFail($id)
+        );
+    }
+
+    public function restore(Request $request,$id){
+        $restoreSubject = SchoolYear::onlyTrashed()->findOrFail($id);
+        $restoreSubject->restore();
+        return (new SchoolYearResource($restoreSubject))->additional([
+            'externalMessage' => "School Year $restoreSubject->name has been restored.",
+            'internalMessage' => "School Year restored."
+        ]);
     }
 }

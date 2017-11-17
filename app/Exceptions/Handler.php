@@ -11,6 +11,7 @@ use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Database\QueryException;
 class Handler extends ExceptionHandler
 {
     /**
@@ -66,16 +67,26 @@ class Handler extends ExceptionHandler
         }
 
         if($exception instanceof MethodNotAllowedHttpException ){
-            return response()->json([
-                "externalMessage" => "The HTTP method used is not available for the requested data.",
-                "internalMessage" => "Http method not allowed for this route."
-            ],404);
+            if($request->wantsJson()){
+                return response()->json([
+                    "externalMessage" => "The HTTP method used is not available for the requested data.",
+                    "internalMessage" => "Http method not allowed for this route."
+                ],404);
+            }
+            
         }
 
         if($exception instanceof ModelNotFoundException ){
             return response()->json([
                 "externalMessage" => "There are no results for the given data.",
                 "internalMessage" => "Resource Not Found!"
+            ],404);
+        }
+
+        if($exception instanceof QueryException){
+            return response()->json([
+                "externalMessage" => "There are no results for the given data.",
+                "internalMessage" => $exception->errorInfo
             ],404);
         }
 

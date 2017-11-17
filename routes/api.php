@@ -68,3 +68,18 @@ Route::apiResource('departments','DepartmentController',['only'=>[
 ]]);
 
 Route::apiResource('school_years','SchoolYearController');
+Route::group(['prefix'=>'school_years'],function(){
+
+    
+    Route::group(['prefix'=>'trashed'],function(){
+
+        Route::get('index','SchoolYearController@trashedIndex')->name('school_years.trashed');
+
+        Route::get('/{school_year}','SchoolYearController@showTrashed')->name('school_years.trashed.show');
+
+        Route::put('/{school_year}','SchoolYearController@restore')->name('school_years.restore');
+
+    });
+
+    
+});
