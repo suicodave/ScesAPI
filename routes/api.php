@@ -26,7 +26,8 @@ use Illuminate\Http\Request;
 
 Route::fallback(function(){
     return response()->json([
-        "message" => "404 Resource Not Found",
+        "externalMessage" => "404 Resource Not Found",
+        "internalMessage" => "Cannot Find Route"
         
     ],404);
 });

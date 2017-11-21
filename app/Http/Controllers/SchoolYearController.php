@@ -151,10 +151,10 @@ class SchoolYearController extends Controller
 
     //show trashed SY
     public function showTrashed($id){
+
+        return new SchoolYearResource(SchoolYear::onlyTrashed()->findorFail($id)->makeVisible('deleted_at'));
         
-        return response()->json(
-            SchoolYear::onlyTrashed()->findorFail($id)
-        );
+        
     }
 
     public function restore(Request $request,$id){
