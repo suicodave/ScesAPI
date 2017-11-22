@@ -35,7 +35,11 @@ class SchoolYearController extends Controller
         $items = $request->has('items') ? $request->items : $this->items ; 
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
-        return new SchoolYearCollection(SchoolYear::orderBy($orderBy,$orderValue)->paginate($items));
+        return new SchoolYearCollection(SchoolYear::orderBy($orderBy,$orderValue)->paginate($items)->appends([
+            'items' => $items,
+            'orderBy' => $orderBy,
+            'orderValue' => $orderValue
+        ]));
     }
 
     
@@ -144,7 +148,11 @@ class SchoolYearController extends Controller
 
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
 
-        return new SchoolYearCollection(SchoolYear::onlyTrashed()->orderBy($orderBy,$orderValue)->paginate($items));
+        return new SchoolYearCollection(SchoolYear::onlyTrashed()->orderBy($orderBy,$orderValue)->paginate($items)->appends([
+            'items' => $items,
+            'orderBy' => $orderBy,
+            'orderValue' => $orderValue
+        ]));
        // return $this->items;
     }
 

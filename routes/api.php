@@ -84,3 +84,21 @@ Route::group(['prefix'=>'school_years'],function(){
 
     
 });
+
+
+Route::apiResource('year_levels','YearLevelController');
+Route::group(['prefix'=>'year_levels'],function(){
+    
+        
+        Route::group(['prefix'=>'trashed'],function(){
+    
+            Route::get('index','YearLevelController@trashedIndex')->name('year_levels.trashed');
+    
+            Route::get('/{year_level}','YearLevelController@showTrashed')->name('year_levels.trashed.show');
+    
+            Route::put('/{year_level}','YearLevelController@restore')->name('year_levels.restore');
+    
+        });
+    
+        
+    });

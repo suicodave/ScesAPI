@@ -48,6 +48,20 @@ class UserPolicy
         return $this->isSuperUser();
     }
 
+    public function storeYearLevel(){ //superuser only
+        return $this->isSuperUser();
+    } 
+
+    public function updateYearLevel(){ //superuser only
+        return $this->isSuperUser();
+    } 
+    public function deleteYearLevel(){ //superuser only
+        return $this->isSuperUser();
+    }
+    public function restoreYearLevel(){ //superuser only
+        return $this->isSuperUser();
+    }  
+
 
    
     
