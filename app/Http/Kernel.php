@@ -40,6 +40,7 @@ class Kernel extends HttpKernel
         'api' => [
             'throttle:60,1',
             'bindings',
+            \App\Http\Middleware\AjaxOnly::class
         ],
     ];
 
@@ -61,6 +62,6 @@ class Kernel extends HttpKernel
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
         'jwtAuth' => \App\Http\Middleware\authJWT::class,
         'jwt.refresh' => \Tymon\JWTAuth\Middleware\RefreshToken::class,
-        'ajaxOnly' => \App\Http\Middleware\AjaxOnly::class
+        
     ];
 }

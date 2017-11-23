@@ -18,7 +18,7 @@ class YearLevelController extends Controller
 
     public function __construct(){
 
-        $this->middleware('ajaxOnly');
+       
         $this->middleware('jwtAuth');
     }
 

@@ -71,6 +71,13 @@ Route::apiResource('departments','DepartmentController',['only'=>[
 Route::apiResource('school_years','SchoolYearController');
 Route::group(['prefix'=>'school_years'],function(){
 
+    Route::group(['prefix' => 'active'], function () {
+
+        Route::get('index','SchoolYearController@getActiveSchoolYear')->name('school_years.active.show');
+        Route::put('/{school_year}','SchoolYearController@activateSchoolYear')->name('school_years.active.activate');
+        
+    
+    });
     
     Route::group(['prefix'=>'trashed'],function(){
 

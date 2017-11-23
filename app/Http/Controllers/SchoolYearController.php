@@ -19,7 +19,7 @@ class SchoolYearController extends Controller
 
     public function __construct(){
         
-        $this->middleware('ajaxOnly');
+        
         $this->middleware('jwtAuth');
         
 
@@ -176,4 +176,38 @@ class SchoolYearController extends Controller
             'internalMessage' => "School Year restored."
         ]);
     }
+
+
+    public function getActiveSchoolYear(){
+        
+        $getActiveSchoolYear = SchoolYear::where('is_active',true)->first();
+
+        return new SchoolYearResource($getActiveSchoolYear);
+    }
+
+    public function activateSchoolYear(SchoolYear $schoolYear)
+    {
+        $getActiveSchoolYear = SchoolYear::where('is_active',true);
+        
+        $count = $getActiveSchoolYear->count();
+         if ($count >= 1 ) {
+            $getActiveSchoolYear->get();
+            $getActiveSchoolYear->update([
+                'is_active' => false
+            ]);
+        
+         }
+
+         $schoolYear->is_active = true;
+         $schoolYear->save();
+
+         return (new SchoolYearResource($schoolYear))->additional([
+            'externalMessage' => "Active School Year is set to $schoolYear->name.",
+            'internalMessage' => "School Year set active."
+        ]);
+        
+    }
+
+
+
 }

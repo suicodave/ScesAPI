@@ -17,6 +17,7 @@ class CreateSchoolYearsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('base');
+            $table->boolean('is_active')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

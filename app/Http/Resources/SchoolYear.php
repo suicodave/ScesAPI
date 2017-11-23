@@ -20,7 +20,8 @@ class SchoolYear extends Resource
             'name' => $this->name,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'deleted_at' => $this->when($this->deleted_at,$this->deleted_at)
+            'deleted_at' => $this->when($this->deleted_at,$this->deleted_at),
+            'is_active' => $this->when($this->is_active,$this->is_active)
         ];
     }
 
@@ -41,9 +42,13 @@ class SchoolYear extends Resource
                     ],
 
                     [
-                            'link' => route('school_years.restore',$this->id),
+                        'link' => route('school_years.restore',$this->id),
                         'purpose' => 'Restore deleted School Year'
-                    ]
+                    ],
+                    [
+                        'link' => route('school_years.active.activate',$this->id),
+                        'purpose' => 'Set active School Year'
+                    ],
                 ],
                 "DELETE" => [
                     'link' => route('school_years.show',$this->id),
@@ -58,6 +63,10 @@ class SchoolYear extends Resource
                         'link' => route('school_years.trashed.show',$this->id),
                         'purpose' => 'Show deleted School Year'
                     ],
+                    [
+                        'link' => route('school_years.active.show'),
+                        'purpose' => 'Get active School Year'
+                    ]
                 ]
                 
 
