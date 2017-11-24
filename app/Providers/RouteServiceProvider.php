@@ -27,6 +27,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('department', '[0-9]+');
         Route::pattern('school_year', '[0-9]+');
         Route::pattern('year_level', '[0-9]+');
+        Route::pattern('college', '[0-9]+');
         parent::boot();
     }
 

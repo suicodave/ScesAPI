@@ -176,7 +176,7 @@ class YearLevelController extends Controller
         $restoreSubject->restore();
         return (new YearLevelResource($restoreSubject))->additional([
             'externalMessage' => "Year Level $restoreSubject->name in Department of $department has been restored.",
-            'internalMessage' => "Year Level Year restored."
+            'internalMessage' => "Year Level restored."
         ]);
     }
 }

@@ -29,13 +29,13 @@ class YearLevel extends Resource
             'otherMethods' =>[
                 'POST' => [
                     'link' => route('year_levels.store'),
-                    'params' => ['name:alphanumeric','department_id:neumeric'],
+                    'params' => ['name:string','department_id:integer'],
                     'purpose' => 'Create new Year Level'
                 ],
                 'PUT' =>[
                     [
                         'link' => route('year_levels.show',$this->id),
-                        'params' => ['name:alphanumeric','department_id:neumeric'],
+                        'params' => ['name:string','department_id:integer'],
                         'purpose' => 'Update  Year Level'
                     ],
 

@@ -187,6 +187,9 @@ class SchoolYearController extends Controller
 
     public function activateSchoolYear(SchoolYear $schoolYear)
     {
+
+        $this->authorize('activateSchoolYear',User::class);
+
         $getActiveSchoolYear = SchoolYear::where('is_active',true);
         
         $count = $getActiveSchoolYear->count();

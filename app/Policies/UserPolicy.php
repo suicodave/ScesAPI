@@ -16,6 +16,9 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
+
+    // User Profiles
+
     public function viewAdmin() //registrar or superuser
     {
         return $this->isRegistrar() || $this->isSuperUser();
@@ -31,6 +34,9 @@ class UserPolicy
         return $this->isRegistrar();
         
     }
+
+
+    // School Year
 
     public function storeSchoolYear(){ //superuser only
         return $this->isSuperUser();
@@ -48,6 +54,13 @@ class UserPolicy
         return $this->isSuperUser();
     }
 
+    public function activateSchoolYear(){ //superuser only
+        return $this->isSuperUser();
+    }
+
+
+    // Year Level
+
     public function storeYearLevel(){ //superuser only
         return $this->isSuperUser();
     } 
@@ -60,8 +73,25 @@ class UserPolicy
     }
     public function restoreYearLevel(){ //superuser only
         return $this->isSuperUser();
-    }  
+    }
 
+
+    // College
+
+    public function storeCollege(){ //superuser only
+        return $this->isSuperUser();
+    }
+    
+    public function updateCollege(){ //superuser only
+        return $this->isSuperUser();
+    }  
+    
+    public function deleteCollege(){ //superuser only
+        return $this->isSuperUser();
+    }
+    public function restoreCollege(){ //superuser only
+        return $this->isSuperUser();
+    }  
 
    
     

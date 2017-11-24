@@ -95,6 +95,7 @@ Route::group(['prefix'=>'school_years'],function(){
 
 Route::apiResource('year_levels','YearLevelController');
 Route::group(['prefix'=>'year_levels'],function(){
+
     
         
         Route::group(['prefix'=>'trashed'],function(){
@@ -108,4 +109,20 @@ Route::group(['prefix'=>'year_levels'],function(){
         });
     
         
+});
+
+
+Route::apiResource('colleges','CollegeController');
+Route::group(['prefix'=>'colleges'],function(){
+    
+    Route::group(['prefix'=>'trashed'],function(){
+
+        Route::get('index','CollegeController@trashedIndex')->name('colleges.trashed');
+
+        Route::get('/{college}','CollegeController@showTrashed')->name('colleges.trashed.show');
+
+        Route::put('/{college}','CollegeController@restore')->name('colleges.restore');
+
     });
+
+});
