@@ -99,7 +99,8 @@ class UserController extends Controller
              
             
              return response()->json([
-                 'token' => $token
+                 'token' => $token,
+                 
              ]);
          }
 

@@ -16,16 +16,16 @@ class CreateRegistrarsTable extends Migration
         Schema::create('registrars', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('user_id')->nullable();
-            $table->string('email')->unique();
             $table->string('first_name');
             $table->string('middle_name');
             $table->string('last_name');
             $table->string('status')->nullable();
-            $table->string("Gender")->nullable();
+            $table->string("gender")->nullable();
             $table->date('birthdate')->nullable();
             $table->integer('processed_by')->nullable();
             $table->string('profile_image')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

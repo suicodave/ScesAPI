@@ -51,7 +51,19 @@ Route::apiResource('admins','AdminController',['except'=>[
 ]]);
 
 Route::apiResource('registrars','RegistrarController');
-
+Route::group(['prefix'=>'registrars'],function(){
+    Route::get('/{id}/students','RegistrarController@registeredStudents')->name('registrars.students');
+    
+    Route::group(['prefix'=>'trashed'],function(){
+        
+        Route::get('index','RegistrarController@trashedIndex')->name('registrars.trashed');
+    
+        Route::get('/{registrar}','RegistrarController@showTrashed')->name('registrars.trashed.show');
+    
+        Route::put('/{registrar}','RegistrarController@restore')->name('registrars.restore');
+    
+    });
+});
 
 
 

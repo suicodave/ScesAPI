@@ -8,10 +8,17 @@ use App\Role;
 use App\Http\Resources\Registrar as RegistrarResource;
 use App\Http\Resources\RegistrarCollection;
 use Illuminate\Http\Request;
+use JWTAuth;
+use Illuminate\Validation\Rule;
+use Carbon\Carbon;
+
 
 
 class RegistrarController extends Controller
 {
+    private $items = 15;
+    private $orderBy = 'id';
+    private $orderValue = 'desc';
 
     public function __construct(){
         $this->middleware('jwtAuth');
@@ -24,14 +31,15 @@ class RegistrarController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->has('items')) {
-            $items = $request->items;
-        }else{
-            $items = 5;
-        }
-        
-       
-        return new RegistrarCollection(Registrar::paginate($items));
+        $items = $request->has('items') ? $request->items : $this->items ; 
+        $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
+        $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
+        return new RegistrarCollection(Registrar::with('user')->orderBy($orderBy,$orderValue)->paginate($items)->appends([
+            'items' => $items,
+            'orderBy' => $orderBy,
+            'orderValue' => $orderValue
+        ]));
+
     }
 
     
@@ -71,8 +79,9 @@ class RegistrarController extends Controller
         $registrar->first_name = ucwords($request->input('first_name'));
         $registrar->middle_name = ucwords($request->input('middle_name'));
         $registrar->last_name = ucwords($request->input('last_name'));
-        $registrar->email = $request->input('email');
-        $registrar->processed_by = $request->input('processed_by');
+        
+        $processedby = JWTAuth::toUser();
+        $registrar->processed_by = $processedby->id;
         
         
         //save the registrar linked with the user account .
@@ -80,11 +89,11 @@ class RegistrarController extends Controller
         $user->registrarProfile()->save($registrar);
 
         //
-
-        return response()->json([
-            'message' => 'A new Registrar Officer has been created!',
-            'data' => $user->registrarProfile
+        return (new RegistrarResource($registrar))->additional([
+            'externalMessage' => "New Registrar has been created.",
+            'internalMessage' => 'Registrar created.',
         ]);
+        
     }
 
     /**
@@ -110,14 +119,38 @@ class RegistrarController extends Controller
      */
     public function update(Request $request, Registrar $registrar)
     {
-        $registrar->first_name = $request->input('first_name');
+        
+
+        $this->authorize('updateRegistrar',User::class);
+        
+        
+        $request->validate([
+            'email' => [
+                'required',
+                Rule::unique('users')->ignore($registrar->user->id)
+            ],
+            'status' => 'nullable|min:6|max:10',
+            'birthdate' => 'nullable|date',
+            'gender' => 'nullable|min:4|max:6'
+        ]);
+                
+        
+        $registrar->status = ucwords($request->input('status'));
+        $registrar->birthdate = new Carbon($request->input('birthdate')); 
+        $registrar->gender = ucwords($request->input('gender'));
+        $user = User::findOrFail($registrar->user->id);
+        $user->email = $request->input('email');
+     
+                
+        $registrar->user()->associate($user);
         $registrar->save();
 
-        return response()->json([
-            "message" => "A Registrar Officer has been updated of id $registrar->id.",
-            "data" => $registrar
+        return (new RegistrarResource($registrar))->additional([
+            'externalMesage' => "Registrar has been successfully updated.",
+            'internalMessage' => "Registrar Updated."
         ]);
     }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -128,12 +161,76 @@ class RegistrarController extends Controller
      */
     public function destroy(Registrar $registrar)
     {
-        return response()->json([
-            "message" => "A Registrar Officer has been deleted of id $registrar->id.",
-            "data" => $registrar
+        $this->authorize('deleteRegistrar',User::class);
+
+        $account = User::find($registrar->user->id);
+
+        $registrar->delete();
+
+        $account->delete();
+
+        return (new RegistrarResource($registrar))->additional([
+            'externalMessage' => "$registrar->first_name $registrar->last_name has been deleted.",
+            'internalMessage' => 'Registrar Deleted.'
+        ]);
+    }
+
+   
+    public function registeredStudents($id){
+        return "students";
+    }
+
+    public function trashedIndex(Request $request){
+            
+        $items = $request->has('items') ? $request->items : $this->items ; 
+    
+        $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
+    
+        $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
+    
+        return new RegistrarCollection(Registrar::with(['user'=>function($q){
+            $q->onlyTrashed();
+        }])->onlyTrashed()->orderBy($orderBy,$orderValue)->paginate($items)->appends([
+            'items' => $items,
+            'orderBy' => $orderBy,
+            'orderValue' => $orderValue
+        ]));
+            
+    }
+            
+            
+        
+    public function showTrashed($id){
+    
+        return new RegistrarResource(Registrar::with(['user'=>function($q){
+            $q->withTrashed();
+        }])->onlyTrashed()->findorFail($id));
+
+        
+        
+    }
+    
+    public function restore(Request $request,$id){
+    
+        $this->authorize('restoreRegistrar',User::class);
+    
+        $restoreSubject = Registrar::onlyTrashed()->findOrFail($id);
+        
+        $restoreAccount = User::onlyTrashed()->findOrFail($restoreSubject->user_id);
+        
+        $restoreSubject->restore();
+        $restoreAccount->restore();
+
+        return (new RegistrarResource($restoreSubject))->additional([
+            'externalMessage' => "$restoreSubject->first_name $restoreSubject->last_name has been restored.",
+            'internalMessage' => "Registrar restored.",
+         
         ]);
     }
 
 
 
 }
+
+
+    

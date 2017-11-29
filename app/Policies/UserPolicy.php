@@ -24,6 +24,9 @@ class UserPolicy
         return $this->isRegistrar() || $this->isSuperUser();
     }
 
+
+    // Registrar Profile
+
     public function storeRegistrar(){ // registrar or superuser
         
         return $this->isRegistrar() || $this->isSuperUser();
@@ -33,6 +36,16 @@ class UserPolicy
         
         return $this->isRegistrar();
         
+    }
+
+    public function deleteRegistrar(){ // registrar or superuser
+        
+        return $this->isRegistrar() || $this->isSuperUser();
+    }
+
+    public function restoreRegistrar(){ // registrar or superuser
+        
+        return $this->isRegistrar() || $this->isSuperUser();
     }
 
 
