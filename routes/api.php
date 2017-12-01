@@ -65,6 +65,19 @@ Route::group(['prefix'=>'registrars'],function(){
     });
 });
 
+Route::apiResource('comelecs','ComelecController');
+Route::group(['prefix'=>'comelecs'],function(){
+    
+    Route::group(['prefix'=>'trashed'],function(){
+        
+        Route::get('index','ComelecController@trashedIndex')->name('comelecs.trashed');
+    
+        Route::get('/{comelec}','ComelecController@showTrashed')->name('comelecs.trashed.show');
+    
+        Route::put('/{comelec}','ComelecController@restore')->name('comelecs.restore');
+    
+    });
+});
 
 
 Route::group(["prefix"=>"users"],function(){

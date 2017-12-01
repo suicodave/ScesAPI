@@ -49,6 +49,29 @@ class UserPolicy
     }
 
 
+    // Comelec
+    public function storeComelec(){ // comelec or superuser
+        
+        return $this->isComelec() || $this->isSuperUser();
+    }
+
+    public function updateComelec(){ //comelec only
+        
+        return $this->isComelec();
+        
+    }
+
+    public function deleteComelec(){ // comelec or superuser
+        
+        return $this->isComelec() || $this->isSuperUser();
+    }
+
+    public function restoreComelec(){ // comelec or superuser
+        
+        return $this->isComelec() || $this->isSuperUser();
+    }
+
+
     // School Year
 
     public function storeSchoolYear(){ //superuser only

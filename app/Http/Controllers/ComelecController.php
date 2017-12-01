@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Registrar;
+use App\Comelec;
 use App\User;
 use App\Role;
-use App\Http\Resources\Registrar as RegistrarResource;
-use App\Http\Resources\RegistrarCollection;
+use App\Http\Resources\Comelec as ComelecResource;
+use App\Http\Resources\ComelecCollection;
 use Illuminate\Http\Request;
 use JWTAuth;
 use Illuminate\Validation\Rule;
 use Carbon\Carbon;
 
-
-
-class RegistrarController extends Controller
+class ComelecController extends Controller
 {
     private $items = 15;
     private $orderBy = 'id';
@@ -34,12 +32,11 @@ class RegistrarController extends Controller
         $items = $request->has('items') ? $request->items : $this->items ; 
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
-        return new RegistrarCollection(Registrar::with('user')->orderBy($orderBy,$orderValue)->paginate($items)->appends([
+        return new ComelecCollection(Comelec::with('user')->orderBy($orderBy,$orderValue)->paginate($items)->appends([
             'items' => $items,
             'orderBy' => $orderBy,
             'orderValue' => $orderValue
-        ]));
-
+        ]));        
     }
 
     
@@ -49,12 +46,10 @@ class RegistrarController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
-     *  store admin 
-     *
      */
     public function store(Request $request)
     {
-        $this->authorize('storeRegistrar',User::class);
+        $this->authorize('storeComelec',User::class);
         $request->validate([
             
             'email' => 'required|email|unique:users',
@@ -64,48 +59,48 @@ class RegistrarController extends Controller
             'last_name' => 'required|max:15'
         ]);
 
-        $role = Role::where('name','Registrar Officer')->first();
+        $role = Role::where('name','Comelec Officer')->first();
         
-        //set Registrar User Account
+        //set Comelec User Account
         $user = new User();
         $user->name =  ucwords($request->input('first_name'))." ".ucwords($request->input('last_name'));
         $user->email = $request->input('email');
         $user->role_id = $role->id;
         $user->password = bcrypt($request->input('password'));
         $user->save();
-
-        //set Registrar entity
-        $registrar = new Registrar();
-        $registrar->first_name = ucwords($request->input('first_name'));
-        $registrar->middle_name = ucwords($request->input('middle_name'));
-        $registrar->last_name = ucwords($request->input('last_name'));
+        
+        
+        //set Comelec entity
+        $comelec = new Comelec();
+        $comelec->first_name = ucwords($request->input('first_name'));
+        $comelec->middle_name = ucwords($request->input('middle_name'));
+        $comelec->last_name = ucwords($request->input('last_name'));
         
         $processedby = JWTAuth::toUser();
-        $registrar->processed_by = $processedby->id;
+        $comelec->processed_by = $processedby->id;
         
         
-        //save the registrar linked with the user account .
+        //save the comelec linked with the user account .
         
-        $user->registrarProfile()->save($registrar);
+        $user->comelecProfile()->save($comelec);
 
         //
-        return (new RegistrarResource($registrar))->additional([
-            'externalMessage' => "New Registrar has been created.",
-            'internalMessage' => 'Registrar created.',
+        return (new ComelecResource($comelec))->additional([
+            'externalMessage' => "New Comelec has been created.",
+            'internalMessage' => 'Comelec created.',
         ]);
-        
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Registrar  $registrar
+     * @param  \App\Comelec  $comelec
      * @return \Illuminate\Http\Response
      */
-    public function show(Registrar $registrar)
+    public function show(Comelec $comelec)
     {
-        
-        return new RegistrarResource($registrar);
+       
+        return new ComelecResource($comelec);
     }
 
     
@@ -114,20 +109,18 @@ class RegistrarController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Registrar  $registrar
+     * @param  \App\Comelec  $comelec
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Registrar $registrar)
+    public function update(Request $request, Comelec $comelec)
     {
-        
-
-        $this->authorize('updateRegistrar',User::class);
+        $this->authorize('updateComelec',User::class);
         
         
         $request->validate([
             'email' => [
                 'required',
-                Rule::unique('users')->ignore($registrar->user->id)
+                Rule::unique('users')->ignore($comelec->user->id)
             ],
             'status' => 'nullable|min:6|max:10',
             'birthdate' => 'nullable|date',
@@ -135,65 +128,63 @@ class RegistrarController extends Controller
         ]);
                 
         
-        $registrar->status = ucwords($request->input('status'));
-        $registrar->birthdate = new Carbon($request->input('birthdate')); 
-        $registrar->gender = ucwords($request->input('gender'));
-        $user = User::findOrFail($registrar->user->id);
+        $comelec->status = ucwords($request->input('status'));
+        $comelec->birthdate = new Carbon($request->input('birthdate')); 
+        $comelec->gender = ucwords($request->input('gender'));
+        $user = User::findOrFail($comelec->user->id);
         $user->email = $request->input('email');
-     
+        
         $processor = JWTAuth::toUser();
-        $registrar->processed_by = $processor->id;
-        $registrar->user()->associate($user);
-        $registrar->save();
+        $comelec->processed_by = $processor->id;        
+        $comelec->user()->associate($user);
+        $comelec->save();
 
-        return (new RegistrarResource($registrar))->additional([
-            'externalMesage' => "Registrar has been successfully updated.",
-            'internalMessage' => "Registrar Updated."
+        return (new ComelecResource($comelec))->additional([
+            'externalMesage' => "Comelec has been successfully updated.",
+            'internalMessage' => "Comelec Updated."
         ]);
     }
-    
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Registrar  $registrar
+     * @param  \App\Comelec  $comelec
      * @return \Illuminate\Http\Response
-     * 
      */
-    public function destroy(Registrar $registrar)
+    public function destroy(Comelec $comelec)
     {
-        $this->authorize('deleteRegistrar',User::class);
+        $this->authorize('deleteComelec',User::class);
 
         $processor = JWTAuth::toUser();
-        
-        $registrar->processed_by = $processor->id;
 
-        $registrar->save();
+        $comelec->processed_by = $processor->id;
 
-        $account = User::find($registrar->user->id);
+        $comelec->save();
 
-        $registrar->delete();
+        $account = User::find($comelec->user->id);
+        $comelec->delete();
 
         $account->delete();
 
-        return (new RegistrarResource($registrar))->additional([
-            'externalMessage' => "$registrar->first_name $registrar->last_name has been deleted.",
-            'internalMessage' => 'Registrar Deleted.'
+        
+
+        return (new ComelecResource($comelec))->additional([
+            'externalMessage' => "$comelec->first_name $comelec->last_name has been deleted.",
+            'internalMessage' => 'Comelec Deleted.',
+            
         ]);
     }
 
-   
-    
-
+    //trashed index
     public function trashedIndex(Request $request){
-            
+        
         $items = $request->has('items') ? $request->items : $this->items ; 
-    
+
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
-    
+
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
-    
-        return new RegistrarCollection(Registrar::with(['user'=>function($q){
+
+        return new ComelecCollection(Comelec::with(['user'=>function($q){
             $q->onlyTrashed();
         }])->onlyTrashed()->orderBy($orderBy,$orderValue)->paginate($items)->appends([
             'items' => $items,
@@ -202,52 +193,43 @@ class RegistrarController extends Controller
         ]));
             
     }
-            
-            
-        
+
+    //show trashed
     public function showTrashed($id){
-    
-        return new RegistrarResource(Registrar::with(['user'=>function($q){
+        
+        return new ComelecResource(Comelec::with(['user'=>function($q){
             $q->withTrashed();
         }])->onlyTrashed()->findorFail($id));
-
-        
         
     }
-    
+
+    //restore
     public function restore(Request $request,$id){
+        
+        $this->authorize('restoreComelec',User::class);
     
-        $this->authorize('restoreRegistrar',User::class);
-    
-        $restoreSubject = Registrar::onlyTrashed()->findOrFail($id);
+        $restoreSubject = Comelec::onlyTrashed()->findOrFail($id);
         
         $restoreAccount = User::onlyTrashed()->findOrFail($restoreSubject->user_id);
 
         $processor = JWTAuth::toUser();
-
+        
         $restoreSubject->restore();
 
         $restoreSubject->processed_by = $processor->id;
 
         $restoreSubject->save();
-
+        
         $restoreAccount->restore();
 
-        return (new RegistrarResource($restoreSubject))->additional([
+        return (new ComelecResource($restoreSubject))->additional([
             'externalMessage' => "$restoreSubject->first_name $restoreSubject->last_name has been restored.",
-            'internalMessage' => "Registrar restored.",
-         
+            'internalMessage' => "Comelec restored.",
+            
         ]);
     }
-
-
-    public function registeredStudents($id){
-        return "students";
-    }
-
 
 
 }
 
 
-    
