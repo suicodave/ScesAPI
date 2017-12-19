@@ -147,7 +147,7 @@ class RegistrarController extends Controller
         $registrar->save();
 
         return (new RegistrarResource($registrar))->additional([
-            'externalMesage' => "Registrar has been successfully updated.",
+            'externalMessage' => "Registrar has been successfully updated.",
             'internalMessage' => "Registrar Updated."
         ]);
     }

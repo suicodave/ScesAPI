@@ -112,7 +112,7 @@ class CollegeController extends Controller
                 
         $college->save();
         return (new CollegeResource($college))->additional([
-            'externalMesage' => "College $oldname has been updated to $college->name headed by $college->head.",
+            'externalMessage' => "College $oldname has been updated to $college->name headed by $college->head.",
             'internalMessage' => "College Updated."
         ]);
     }

@@ -116,7 +116,7 @@ class SchoolYearController extends Controller
         $schoolYear->save();
 
         return (new SchoolYearResource($schoolYear))->additional([
-            'externalMesage' => "School Year $oldSchoolYear has been updated to $schoolYear->name.",
+            'externalMessage' => "School Year $oldSchoolYear has been updated to $schoolYear->name.",
             'internalMessage' => "School Year Updated."
         ]);
         

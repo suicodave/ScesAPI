@@ -59,7 +59,7 @@ class YearLevelController extends Controller
             'department_id' => 'required|numeric'
         ]);
 
-        $name = $request->input('name');
+        $name = ucwords($request->input('name'));
         $departmentId = $request->input('department_id');
 
         $yearLevel = YearLevel::firstOrNew([
@@ -119,7 +119,7 @@ class YearLevelController extends Controller
         $yearLevel->department()->associate($department);
         $yearLevel->save();
         return (new YearLevelResource($yearLevel))->additional([
-            'externalMesage' => "School Year $oldYearLevel in Department of $oldDepartment has been updated to $yearLevel->name in Department of $department->name.",
+            'externalMessage' => "School Year $oldYearLevel in Department of $oldDepartment has been updated to $yearLevel->name in Department of $department->name.",
             'internalMessage' => "School Year Updated."
         ]);
     }

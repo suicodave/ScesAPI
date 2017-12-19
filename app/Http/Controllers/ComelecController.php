@@ -140,7 +140,7 @@ class ComelecController extends Controller
         $comelec->save();
 
         return (new ComelecResource($comelec))->additional([
-            'externalMesage' => "Comelec has been successfully updated.",
+            'externalMessage' => "Comelec has been successfully updated.",
             'internalMessage' => "Comelec Updated."
         ]);
     }
