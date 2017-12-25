@@ -7,7 +7,7 @@ use App\User;
 use App\Http\Resources\SchoolYear as SchoolYearResource;
 use App\Http\Resources\SchoolYearCollection;
 use Illuminate\Http\Request;
-
+use Illuminate\Validation\Rule;
 use JWTAuth;
 
 class SchoolYearController extends Controller
@@ -104,7 +104,11 @@ class SchoolYearController extends Controller
         $this->authorize('updateSchoolYear',User::class);
 
         $request->validate([
-            'base' => 'required|unique:school_years|numeric|digits:4|max:2200'
+            'base' => [
+                'required',
+                'digits:4',
+                Rule::unique('school_years')->ignore($schoolYear->id)
+            ]
         ]);
 
         $base = $request->input('base');
@@ -131,7 +135,12 @@ class SchoolYearController extends Controller
     public function destroy(SchoolYear $schoolYear)
     {
         $this->authorize('deleteSchoolYear',User::class);
-
+        if($schoolYear->is_active){
+            return response()->json([
+                'externalMessage' => "SchoolYear $schoolYear->name is active and cannot be deleted",
+                'internalMessage' =>'Active School Year cannot be deleted'
+            ]);
+        }
         $schoolYear->delete();
         return (new SchoolYearResource($schoolYear))->additional([
             'externalMessage' => "School Year $schoolYear->name has been deleted.",

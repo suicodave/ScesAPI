@@ -21,7 +21,7 @@ class SchoolYear extends Resource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'deleted_at' => $this->when($this->deleted_at,$this->deleted_at),
-            'is_active' => $this->when($this->is_active,$this->is_active)
+            'is_active' => $this->is_active
         ];
     }
 
