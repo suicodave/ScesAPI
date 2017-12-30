@@ -17,18 +17,19 @@ class Registrar extends Resource
     {
         return [
             'id' => $this->id,
-            'firstName' => $this->first_name,
-            'middleName' => $this->middle_name,
-            'lastName' => $this->last_name,
+            'first_name' => $this->first_name,
+            'middle_name' => $this->middle_name,
+            'last_name' => $this->last_name,
             'email' => $this->user->email ,
             'gender' => $this->gender,
             'status' => $this->status,
             'birthdate' => ($this->birthdate == null) ? null :  (new Carbon($this->birthdate))->toFormattedDateString(),
             'profile' => route('registrars.show',$this->id),
             'avatar' => route('users.image',$this->profile_image),
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
-            'processedBy' => $this->processor,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'deleted_at' => $this->when($this->deleted_at ,$this->deleted_at),
+            'processed_by' => $this->processor,
             'relationshipLinks' => [
                 'registeredStudents' => 'registrars/id/students',
                 'activityLogs' => 'registrars/id/logs'
