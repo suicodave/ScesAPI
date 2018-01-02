@@ -1,5 +1,5 @@
 <?php
-
+$key = getenv('APP_KEY');
 return [
 
     /*
@@ -104,7 +104,7 @@ return [
     |
     */
 
-    'key' => 'base64:IG8veAXO+OF3t2VcTi2Y0Y6GPPqEkZQSNe6/6vYhnQM=',
+    'key' => $key,
 
     'cipher' => 'AES-256-CBC',
 

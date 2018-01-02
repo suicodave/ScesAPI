@@ -1,5 +1,5 @@
 <?php
-$url = parse_url(getenv("CLEARDB_DATABASE_URL"));
+$url = parse_url(getenv("JAWSDB_MARIA_URL"));
 
 $host = $url["host"];
 $username = $url["user"];
