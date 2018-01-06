@@ -93,6 +93,7 @@ Route::apiResource('departments','DepartmentController',['only'=>[
     'index','show'
 ]]);
 
+
 Route::apiResource('school_years','SchoolYearController');
 Route::group(['prefix'=>'school_years'],function(){
 

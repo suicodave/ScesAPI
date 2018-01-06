@@ -20,16 +20,10 @@ class DepartmentController extends Controller
     public function __construct(){
         $this->middleware('jwtAuth');
     }
-    public function index(Request $request)
+    public function index()
     {
-        $items = $request->has('items') ? $request->items : $this->items ; 
-        $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy ;
-        $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
-        return new DepartmentCollection(Department::orderBy($orderBy,$orderValue)->paginate($items)->appends([
-            'items' => $items,
-            'orderBy' => $orderBy,
-            'orderValue' => $orderValue
-        ]));
+        $department=Department::with('yearLevels')->get();
+        return new DepartmentCollection($department);
     }
 
     
@@ -82,5 +76,10 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
         return response()->json($id);
+    }
+
+    public function showYearLevels(){
+        $departments = Department::with('yearLevels')->get();
+        return response()->json($departments);
     }
 }

@@ -18,7 +18,8 @@ class Department extends Resource
             'id' => $this->id,
             'name' => $this->name,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'updated_at' => $this->updated_at,
+            'year_levels' => $this->yearLevels
         ];
     }
 }
