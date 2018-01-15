@@ -24,6 +24,21 @@ class UserPolicy
         return $this->isRegistrar() || $this->isSuperUser();
     }
 
+    // Student Profile
+    public function storeStudent(){ //registrar only
+        
+        return $this->isRegistrar();
+        
+    }
+    public function deleteStudent(){ // registrar only
+        
+        return $this->isRegistrar();
+    }
+    public function restoreStudent(){ // registrar only
+        
+        return $this->isRegistrar();
+    }
+
 
     // Registrar Profile
 

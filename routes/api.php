@@ -87,6 +87,7 @@ Route::group(["prefix"=>"users"],function(){
 
 
 
+
 //school settings
 
 Route::apiResource('departments','DepartmentController',['only'=>[
@@ -152,3 +153,7 @@ Route::group(['prefix'=>'colleges'],function(){
     });
 
 });
+
+
+
+Route::apiResource('students','StudentController');
