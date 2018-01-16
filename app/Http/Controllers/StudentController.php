@@ -170,7 +170,27 @@ class StudentController extends Controller
      */
     public function update(Request $request, student $student)
     {
-        //
+
+        $this->authorize('updateStudent', User::class);
+
+        $request->validate([
+            'department_id' => 'required|numeric',
+            'college_id' => 'required|numeric',
+            'year_level_id' => 'required|numeric',
+            'school_year_id' => 'required|numeric'
+        ]);
+
+        $student->department_id = $request->input('department_id') ;
+        $student->college_id = $request->input('college_id') ;
+        $student->year_level_id = $request->input('year_level_id') ;
+        $student->school_year_id = $request->input('school_year_id') ;
+
+        $student->save();
+
+        return (new StudentResource($student))->additional([
+            'externalMessage' => "Student has been successfully updated.",
+            'internalMessage' => "Student Updated."
+        ]);
     }
 
 

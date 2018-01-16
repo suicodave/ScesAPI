@@ -38,6 +38,10 @@ class UserPolicy
         
         return $this->isRegistrar();
     }
+    public function updateStudent(){ // registrar only
+        
+        return $this->isRegistrar();
+    }
 
 
     // Registrar Profile
