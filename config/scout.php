@@ -1,5 +1,6 @@
 <?php
-
+$app_id = getenv('ALGOLIA_APP_ID');
+$secret = getenv('ALGOLIA_SECRET');
 return [
 
     /*
@@ -71,8 +72,8 @@ return [
     */
 
     'algolia' => [
-        'id' => env('ALGOLIA_APP_ID', ''),
-        'secret' => env('ALGOLIA_SECRET', ''),
+        'id' => env('ALGOLIA_APP_ID', $app_id),
+        'secret' => env('ALGOLIA_SECRET', $secret),
     ],
 
 ];
