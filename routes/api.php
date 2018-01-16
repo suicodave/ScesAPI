@@ -87,11 +87,13 @@ Route::group(["prefix"=>"users"],function(){
 
 
 
+
 //school settings
 
 Route::apiResource('departments','DepartmentController',['only'=>[
     'index','show'
 ]]);
+
 
 Route::apiResource('school_years','SchoolYearController');
 Route::group(['prefix'=>'school_years'],function(){
@@ -151,3 +153,7 @@ Route::group(['prefix'=>'colleges'],function(){
     });
 
 });
+
+
+
+Route::apiResource('students','StudentController');
