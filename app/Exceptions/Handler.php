@@ -56,13 +56,11 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if($exception instanceof AuthorizationException){
-            if($request->wantsJson()){
-                return response()->json([
-                    "externalMessage" => "This user is not permitted to authorize this action.",
-                    "internalMessage" => "Unauthorized action"
-                ],401);
-            }
-            return redirect()->route("unauthorized");
+            return response()->json([
+                "externalMessage" => "This user is not authorize to do this action.",
+                "internalMessage" => "Unauthorized action"
+            ],401);
+            
 
         }
 

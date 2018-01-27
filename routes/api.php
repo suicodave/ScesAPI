@@ -45,6 +45,7 @@ Route::fallback(function(){
 
 
 
+Route::apiResource('students','StudentController');
 
 Route::apiResource('admins','AdminController',['except'=>[
     'store'
@@ -155,5 +156,5 @@ Route::group(['prefix'=>'colleges'],function(){
 });
 
 
-
-Route::apiResource('students','StudentController');
+// election
+Route::apiResource('elections','ElectionController');
