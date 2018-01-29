@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Election;
 use App\Department;
 use App\Http\Resources\Election as ElectionResource;
+use App\Http\Resources\ElectionCollection;
 use Illuminate\Http\Request;
 use JWTAuth;
 
@@ -23,7 +24,8 @@ class ElectionController extends Controller
      */
     public function index()
     {
-        //
+        $election = Election::all();
+        return (new ElectionCollection($election));
     }
 
 
@@ -50,8 +52,8 @@ class ElectionController extends Controller
         $election->description = ucfirst($request->description);
         $election->school_year_id = $request->school_year_id;
         $election->department_ids = implode($request->department_ids, " ");
-        $election->is_party_enabled = $request->is_party_enabled || null;
-        $election->is_colrep_enabled = $request->is_colrep_enabled || null;
+        $election->is_party_enabled = $request->is_party_enabled || 0;
+        $election->is_colrep_enabled = $request->is_colrep_enabled || 0;
 
         $processed_by = JWTAuth::toUser();
         $election->processor_id = $processed_by->id;

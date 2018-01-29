@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ElectionCollection extends ResourceCollection
+class PositionCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -16,6 +16,6 @@ class ElectionCollection extends ResourceCollection
     {
         return [
             'data' => $this->collection
-        ] ;
+        ];
     }
 }

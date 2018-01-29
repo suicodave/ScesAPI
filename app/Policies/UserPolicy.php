@@ -182,8 +182,40 @@ class UserPolicy
 
     }
 
-   
+    // Position
+
+    public function storePosition()
+    { //comelec only
+
+        return $this->isComelec();
+
+    }
+
+    public function deletePosition()
+    { //comelec only
+
+        return $this->isComelec();
+
+    }
     
+
+    // Partylist
+    public function storePartylist()
+    { //comelec only
+
+        return $this->isComelec();
+
+    }
+
+    public function deletePartylist()
+    { //comelec only
+
+        return $this->isComelec();
+
+    }
+
+
+
     ##################################################
 
 

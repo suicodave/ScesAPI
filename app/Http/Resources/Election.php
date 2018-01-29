@@ -23,7 +23,6 @@ class Election extends Resource
             ->whereIn('department_id', $dep_ids)->count();
 
 
-
         return [
             'id' => $this->id,
             'description' => $this->description,
@@ -32,11 +31,15 @@ class Election extends Resource
             'is_party_enabled' => $this->is_party_enabled,
             'is_colrep_enabled' => $this->is_colrep_enabled,
             'college_representatives' => $this->when($this->is_party_enabled, 'asd'),
-            'partylist' => $this->when($this->is_party_enabled, 'asd'),
+            'partylists' => $this->when($this->is_party_enabled, route('partylists.index', $this->id)),
             'processed_by' => $this->processed_by,
             'number_of_students' => $students,
             'accumulated_votes' => 'asd',
-            'remaining_votes' => '12'
+            'remaining_votes' => '12',
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'positions' => route('positions.index', $this->id),
+            'candidates' => route('candidates.index', $this->id)
         ];
     }
 }
