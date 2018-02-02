@@ -15,6 +15,12 @@ class CreateCandidatesTable extends Migration
     {
         Schema::create('candidates', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('student_id');
+            $table->integer('election_id');
+            $table->integer('position_id');
+            $table->integer('partylist_id')->nullable();
+            $table->string('profile_image')->nullable();
+            $table->string('about_me');
             $table->timestamps();
         });
     }

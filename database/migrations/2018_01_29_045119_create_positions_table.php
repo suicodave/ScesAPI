@@ -19,6 +19,7 @@ class CreatePositionsTable extends Migration
             $table->string('name');
             $table->integer('number_of_winners')->default(0);
             $table->boolean('is_colrep')->default(0);
+            $table->boolean('col_id')->default(0);
             $table->timestamps();
         });
     }

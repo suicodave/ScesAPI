@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
-class Position extends Resource
+class Candidate extends Resource
 {
     /**
      * Transform the resource into an array.
@@ -16,13 +16,14 @@ class Position extends Resource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'number_of_winners' => $this->number_of_winners,
-            'is_colrep' => $this->is_colrep,
+            'student_profile' => $this->student,
             'election' => $this->election,
+            'partylist' => $this->when($this->election->is_party_enabled, $this->election->is_party_enabled),
+            'about_me' => $this->about_me,
+            'profile_image' => $this->profile_image,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'college' => $this->when($this->is_colrep, $this->college)
+            'updated_at' => $this->updated_at
+
         ];
     }
 }

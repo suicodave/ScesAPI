@@ -8,6 +8,9 @@ use App\Http\Resources\Election as ElectionResource;
 use App\Http\Resources\ElectionCollection;
 use Illuminate\Http\Request;
 use JWTAuth;
+use App\Partylist;
+use App\College;
+use App\Position;
 
 
 class ElectionController extends Controller
@@ -58,6 +61,24 @@ class ElectionController extends Controller
         $processed_by = JWTAuth::toUser();
         $election->processor_id = $processed_by->id;
         $election->save();
+
+        if ($election->is_party_enabled) {
+            $party = new Partylist();
+            $party->name = "Independent";
+            $party->is_independent = true;
+            $election->partylists()->save($party);
+        }
+
+        if ($election->is_colrep_enabled) {
+            $colleges = College::all();
+            foreach ($colleges as $key) {
+                $colpos = new Position();
+                $colpos->name = "College of " . $key->name . " Representative";
+                $colpos->is_colrep = true;
+                $colpos->col_id = $key->id;
+                $election->positions()->save($colpos);
+            }
+        }
 
         return (new ElectionResource($election))->additional([
             'externalMessage' => "New election has been created.",

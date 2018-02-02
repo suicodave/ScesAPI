@@ -30,6 +30,10 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('college', '[0-9]+');
         Route::pattern('registrar', '[0-9]+');
         Route::pattern('comelec', '[0-9]+');
+        Route::pattern('student', '[0-9]+');
+        Route::pattern('election', '[0-9]+');
+        Route::pattern('candidate', '[0-9]+');
+        Route::pattern('partylist', '[0-9]+');
         parent::boot();
     }
 

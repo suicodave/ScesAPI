@@ -133,7 +133,7 @@ class StudentController extends Controller
 
         //set student user account
         $user = new User();
-        $user->name = $first_name . " " . $last_name;
+        $user->name = ucwords($first_name . " " . $last_name);
         $user->email = $email;
         $user->password = bcrypt($first_name . $middle_name . $last_name);
         $user->role_id = $role->id;

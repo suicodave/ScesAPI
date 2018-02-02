@@ -214,6 +214,20 @@ class UserPolicy
 
     }
 
+    // Candidate
+    public function storeCandidate()
+    { //comelec only
+
+        return $this->isComelec();
+
+    }
+    public function deleteCandidate()
+    { //comelec only
+
+        return $this->isComelec();
+
+    }
+
 
 
     ##################################################

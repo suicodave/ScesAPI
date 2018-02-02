@@ -26,7 +26,13 @@ class Election extends Model
         return $this->hasMany('App\Partylist', 'election_id', 'id');
     }
 
-    public function candidates(){
-        return $this->hasMany('App\Candidate','election_id','id');
+    public function candidates()
+    {
+        return $this->hasMany('App\Candidate', 'election_id', 'id');
+    }
+
+    public function collegeRepresentatives()
+    {
+        return $this->hasMany('App\Position', 'election_id', 'id')->where('is_colrep', '1');
     }
 }

@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\QueryException;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -55,44 +56,44 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if($exception instanceof AuthorizationException){
+        if ($exception instanceof AuthorizationException) {
             return response()->json([
                 "externalMessage" => "This user is not authorize to do this action.",
                 "internalMessage" => "Unauthorized action"
-            ],401);
-            
+            ], 401);
+
 
         }
 
-        if($exception instanceof MethodNotAllowedHttpException ){
-            if($request->wantsJson()){
+        if ($exception instanceof MethodNotAllowedHttpException) {
+            if ($request->wantsJson()) {
                 return response()->json([
                     "externalMessage" => "The HTTP method used is not available for the requested data.",
                     "internalMessage" => "Http method not allowed for this route."
-                ],404);
+                ], 404);
             }
-            
+
         }
 
-        if($exception instanceof ModelNotFoundException ){
+        if ($exception instanceof ModelNotFoundException) {
             return response()->json([
                 "externalMessage" => "There are no results for the given data.",
                 "internalMessage" => "Resource Not Found!"
-            ],404);
+            ], 404);
         }
 
-        if($exception instanceof QueryException){
+        if ($exception instanceof QueryException) {
             return response()->json([
                 "externalMessage" => "There are no results for the given data.",
-                "internalMessage" => $exception->errorInfo
-            ],404);
+                "internalMessage" => "Query Exception". $exception->getMessage()
+            ], 404);
         }
 
-        
+
 
         return parent::render($request, $exception);
-        
-       
-        
+
+
+
     }
 }
