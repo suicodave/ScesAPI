@@ -11,10 +11,13 @@ use JWTAuth;
 use App\Partylist;
 use App\College;
 use App\Position;
-
+use App\Candidate;
 
 class ElectionController extends Controller
 {
+    private $items = 15;
+    private $orderBy = 'id';
+    private $orderValue = 'desc';
     public function __construct()
     {
         $this->middleware('jwtAuth');
@@ -25,10 +28,36 @@ class ElectionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $election = Election::all();
-        return (new ElectionCollection($election));
+        $request->validate([
+            'is_published' => 'boolean',
+            'is_active' => 'boolean',
+            'my_election' => 'boolean'
+        ]);
+        $election = Election::when($request->filled('is_published'), function ($query) use ($request) {
+            $is_published = $request->is_published;
+            return $query->where('is_published', $is_published);
+        })->when($request->filled('is_active'), function ($query) use ($request) {
+            $is_active = $request->is_active;
+            return $query->where('is_active', $is_active);
+        });
+
+        if ($request->my_election) {
+            $user = JWTAuth::toUser();
+            $election->where('processor_id', $user->id);
+        }
+
+        $items = $request->has('items') ? $request->items : $this->items;
+        $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy;
+        $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
+        return new ElectionCollection($election->orderBy($orderBy, $orderValue)->paginate($items)->appends([
+            'items' => $items,
+            'orderBy' => $orderBy,
+            'orderValue' => $orderValue
+        ]));
+
+
     }
 
 
@@ -120,6 +149,24 @@ class ElectionController extends Controller
      */
     public function destroy(Election $election)
     {
-        //
+        $this->authorize('deleteElection', 'App\User');
+
+
+        $election->delete();
+
+        $candidate = Candidate::where('election_id', $election->id);
+        $candidate->delete();
+        $position = Position::where('election_id', $election->id);
+        $position->delete();
+        $party = Partylist::where('election_id', $election->id);
+        $party->delete();
+
+        return (new ElectionResource($election))->additional([
+            'externalMessage' => "Election has been deleted.",
+            'internalMessage' => 'Election Deleted.',
+        ]);
     }
+
+
+
 }

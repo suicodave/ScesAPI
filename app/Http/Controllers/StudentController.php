@@ -33,6 +33,11 @@ class StudentController extends Controller
      */
     public function index(Request $request)
     {
+        $request->validate([
+            'paginate' => 'boolean',
+            'school_year_id' => 'numeric',
+            'department_id' => 'numeric'
+        ]);
 
         $student = Student::when($request->filled('school_year_id'), function ($query) use ($request) {
             $school_year_id = $request->school_year_id;
@@ -43,6 +48,10 @@ class StudentController extends Controller
         })->when($request->filled('search'), function ($query) use ($request) {
             return Student::search($request->search);
         });
+
+        if ($request->filled('paginate') && !$request->paginate ) {
+            return new StudentCollection($student->get());
+        }
 
         $items = $request->has('items') ? $request->items : $this->items;
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy;
@@ -180,10 +189,10 @@ class StudentController extends Controller
             'school_year_id' => 'required|numeric'
         ]);
 
-        $student->department_id = $request->input('department_id') ;
-        $student->college_id = $request->input('college_id') ;
-        $student->year_level_id = $request->input('year_level_id') ;
-        $student->school_year_id = $request->input('school_year_id') ;
+        $student->department_id = $request->input('department_id');
+        $student->college_id = $request->input('college_id');
+        $student->year_level_id = $request->input('year_level_id');
+        $student->school_year_id = $request->input('school_year_id');
 
         $student->save();
 

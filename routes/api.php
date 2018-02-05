@@ -159,10 +159,13 @@ Route::group(['prefix' => 'colleges'], function () {
 // election
 Route::apiResource('elections', 'ElectionController');
 
-Route::group(['prefix' => 'elections/{election}'], function () {
-    Route::apiResource('positions', 'PositionController');
-    Route::apiResource('candidates', 'CandidateController');
-    Route::apiResource('partylists', 'PartylistController');
-    Route::apiResource('votes', 'VoteController');
-    Route::get('standings', 'CandidateController@stading');
+Route::group(['prefix' => 'elections'], function () {
+    Route::group(['prefix' => '{election}'], function () {
+        Route::apiResource('positions', 'PositionController');
+        Route::apiResource('candidates', 'CandidateController');
+        Route::apiResource('partylists', 'PartylistController');
+        Route::apiResource('votes', 'VoteController');
+        Route::get('standings', 'CandidateController@stading');
+    });
+
 });

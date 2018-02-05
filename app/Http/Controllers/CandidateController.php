@@ -36,12 +36,8 @@ class CandidateController extends Controller
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy;
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
 
-        $candidate = Candidate::where('election_id', $election->id);
-        return new CandidateCollection($candidate->orderBy($orderBy, $orderValue)->paginate($items)->appends([
-            'items' => $items,
-            'orderBy' => $orderBy,
-            'orderValue' => $orderValue
-        ]));
+        $candidate = Candidate::where('election_id', $election->id)->orderBy('id','desc');
+        return (new CandidateCollection($candidate->get()));
     }
 
 
@@ -55,7 +51,7 @@ class CandidateController extends Controller
     public function store(Request $request, Election $election)
     {
 
-        $this->authorize('deleteCandidate', User::class);
+        $this->authorize('storeCandidate', 'App\User');
         $request->validate([
             'student_id' => 'required|filled|numeric',
             'election_id' => 'required|filled|numeric',
@@ -70,7 +66,7 @@ class CandidateController extends Controller
         $candidate->about_me = $request->about_me;
         $candidate->election_id = $election->id;
         $candidate->student_id = $check_student->id;
-        
+
         $image = $request->file('profile_image');
 
 
@@ -118,7 +114,7 @@ class CandidateController extends Controller
             // check if candidate exceeds position slots per party and not in independent 
             if ($candidate_count >= $position->number_of_winners && !$partylist->is_independent) {
                 return response()->json([
-                    'externalMessage' => 'Max candidates reached in position' . $position->name . ' of party' . $partylist->name . ',',
+                    'externalMessage' => 'Max candidates reached in position ' . $position->name . ' of party ' . $partylist->name,
                     'internalMessage ' => ' Max candidates in position by party'
                 ], 422);
             }
@@ -152,16 +148,7 @@ class CandidateController extends Controller
         return (new CandidateResource($candidate));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Candidate  $candidate
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Candidate $candidate)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -187,7 +174,7 @@ class CandidateController extends Controller
             throw new ModelNotFoundException;
         }
 
-        $this->authorize('deleteCandidate', User::class);
+        $this->authorize('deleteCandidate', 'App\User');
         $candidate->delete();
 
         return (new CandidateResource($candidate))->additional([

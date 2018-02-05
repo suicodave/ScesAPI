@@ -17,7 +17,7 @@ class Partylist extends Resource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'is_independent' => ($this->is_indipendent == null) ? 0 : $this->is_indipendent,
+            'is_independent' => ($this->is_independent == null) ? 0 : $this->is_independent,
             'election_id' => $this->election_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at

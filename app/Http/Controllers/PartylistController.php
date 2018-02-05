@@ -9,6 +9,7 @@ use App\Http\Resources\Partylist as PartylistResource;
 use App\Http\Resources\PartylistCollection;
 use JWT;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\Rule;
 
 class PartylistController extends Controller
 {
@@ -33,11 +34,8 @@ class PartylistController extends Controller
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy;
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
         $partylist = Partylist::where('election_id', $election->id);
-        return new PartylistCollection($partylist->orderBy($orderBy, $orderValue)->paginate($items)->appends([
-            'items' => $items,
-            'orderBy' => $orderBy,
-            'orderValue' => $orderValue
-        ]));
+        return (new PartylistCollection($partylist->get()));
+
     }
 
 
@@ -53,7 +51,10 @@ class PartylistController extends Controller
         $this->authorize('storePartylist', 'App\User');
 
         $request->validate([
-            'name' => 'required|unique:partylists|max:60'
+            'name' => [
+                'required',
+                'max:60'
+            ]
         ]);
 
         $party = new Partylist();
@@ -91,9 +92,25 @@ class PartylistController extends Controller
      * @param  \App\Partylist  $partylist
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Partylist $partylist)
+    public function update(Request $request, Election $election, Partylist $partylist)
     {
-        //
+        $this->authorize('storePartylist', 'App\User');
+        $request->validate([
+            'name' => 'max:60',
+            'is_independent' => 'boolean'
+        ]);
+        if ($election->id != $partylist->election_id) {
+            throw new ModelNotFoundException;
+        }
+
+        $partylist->name = ($request->has('name')) ? ucwords($request->name) : $partylist->name;
+        $partylist->is_independent = ($request->has('is_independent')) ? $request->is_independent : $partylist->is_independent;
+        $partylist->save();
+
+        return (new PartylistResource($partylist))->additional([
+            'externalMessage' => "Partylist has been updated.",
+            'internalMessage' => 'Partylist updated.',
+        ]);
     }
 
     /**

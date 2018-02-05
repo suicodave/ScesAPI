@@ -181,6 +181,12 @@ class UserPolicy
         return $this->isComelec();
 
     }
+    public function deleteElection()
+    { //comelec only
+
+        return $this->isComelec();
+
+    }
 
     // Position
 
