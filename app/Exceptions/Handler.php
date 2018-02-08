@@ -85,7 +85,7 @@ class Handler extends ExceptionHandler
         if ($exception instanceof QueryException) {
             return response()->json([
                 "externalMessage" => "There are no results for the given data.",
-                "internalMessage" => "Query Exception". $exception->getMessage()
+                "internalMessage" => "Query Exception"
             ], 404);
         }
 
