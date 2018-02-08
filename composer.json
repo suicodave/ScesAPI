@@ -9,6 +9,7 @@
         "algolia/algoliasearch-client-php": "^1.25",
         "barryvdh/laravel-cors": "^0.10.0",
         "cloudinary/cloudinary_php": "^1.8",
+        "doctrine/dbal": "^2.6",
         "fideloper/proxy": "~3.3",
         "fzaninotto/faker": "~1.4",
         "jrm2k6/cloudder": "0.4.*",
