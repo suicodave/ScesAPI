@@ -11,4 +11,8 @@ class Department extends Model
         return $this->hasMany('App\YearLevel');
     }
 
+    public function students(){
+        return $this->hasMany('App\Student','department_id','id');
+    }
+
 }

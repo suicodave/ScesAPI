@@ -4,10 +4,11 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Searchable;
+use Illuminate\Notifications\Notifiable;
 
 class Student extends Model
 {
-    use Searchable;
+    use Notifiable, Searchable;
     public function user()
     {
         return $this->belongsTo('App\User', 'user_id', 'id');
@@ -32,9 +33,10 @@ class Student extends Model
         return $this->belongsTo('App\SchoolYear', 'school_year_id', 'id');
     }
 
-    public function processor(){
-        return $this->hasOne('App\User','id','processed_by');
+    public function processor()
+    {
+        return $this->hasOne('App\User', 'id', 'processed_by');
     }
 
-    
+
 }
