@@ -33,7 +33,7 @@ class PartylistController extends Controller
         $items = $request->has('items') ? $request->items : $this->items;
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy;
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
-        $partylist = Partylist::where('election_id', $election->id);
+        $partylist = Partylist::where('election_id', $election->id)->orderBy('id','desc') ;
         return (new PartylistCollection($partylist->get()));
 
     }

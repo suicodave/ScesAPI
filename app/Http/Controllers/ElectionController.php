@@ -12,6 +12,13 @@ use App\Partylist;
 use App\College;
 use App\Position;
 use App\Candidate;
+use App\Student;
+use App\Notifications\ElectionStarted;
+use Notification;
+use Log;
+use App\Jobs\ProcessElectionStartedNotification;
+use App\Events\ElectionStartedEvent;
+use Event;
 
 class ElectionController extends Controller
 {
@@ -138,7 +145,47 @@ class ElectionController extends Controller
      */
     public function update(Request $request, Election $election)
     {
-        //
+
+        $request->validate([
+            'is_active' => 'boolean',
+            'is_published' => 'boolean',
+            'is_started' => 'boolean'
+        ]);
+        $updateMessage = "Election has been updated.";
+        if ($request->has('is_active')) {
+            $is_active = $request->is_active;
+            $election->is_active = $is_active;
+        }
+
+        if ($request->has('is_started')) {
+            $is_started = $request->is_started;
+            $election->is_started = $is_started;
+            if ($is_started) {
+                $dep_ids = explode(' ', $election->department_ids);
+                $departments = Department::find($dep_ids);
+
+                $students = Student::where('school_year_id', $election->school_year_id)
+                    ->whereIn('department_id', $dep_ids)->get();
+
+                // Log::info("Request Cycle with Queues Begins");
+                // $this->dispatch(new ProcessElectionStartedNotification($students, $election));
+                // Log::info("Request Cycle with Queues Ends");
+                // $updateMessage = "Election is started!";
+                event(new ElectionStartedEvent($election));
+                return response()->json($election);
+            }
+            $election->save();
+        }
+        if ($request->has('is_published')) {
+            $is_published = $request->is_published;
+            $election->is_published = $is_published;
+        }
+
+        return (new ElectionResource($election))->additional([
+            'externalMessage' => $updateMessage,
+            'internalMessage' => 'Election updated.',
+        ]);
+
     }
 
     /**

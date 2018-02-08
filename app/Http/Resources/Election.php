@@ -29,6 +29,7 @@ class Election extends Resource
             'number_of_students' => $students,
             'is_active' => $this->is_active,
             'is_published' => $this->is_published,
+            'is_started' => $this->is_started,
             'accumulated_votes' => 'asd',
             'remaining_votes' => '12',
             'departments' => $departments,
