@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\User;
 use App\Role;
 use Illuminate\Http\Request;
 use JWTAuth;
+
 class UserController extends Controller
 {
     /**
@@ -35,15 +37,15 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $adminRole = Role::where('name','Super User')->first();
+        $adminRole = Role::where('name', 'Super User')->first();
         $admin = new User();
         $admin->name = $request->name;
         $admin->email = $request->email;
         $admin->password = bcrypt($request->password);
-        
-        
+
+
         $adminRole->user()->save($admin);
-        
+
         return response()->json([
             "Admin" => $admin,
             "role" => $admin->role()->get()
@@ -61,7 +63,7 @@ class UserController extends Controller
         //
     }
 
-    
+
 
     /**
      * Update the specified resource in storage.
@@ -87,27 +89,30 @@ class UserController extends Controller
     }
 
 
-    public function login(Request $request){
-        
-             $user = $request->only(["email","password"]);
-     
-             if(!$token=JWTAuth::attempt($user)){
-                 return response()->json([
-                     "message" => "Invalid credentials"
-                 ],401);
-             }
-             
-            
-             return response()->json([
-                 'token' => $token,
-                 
-             ]);
-         }
+    public function login(Request $request)
+    {
 
-    public function image($id){
+        $user = $request->only(["email", "password"]);
+
+        if (!$token = JWTAuth::attempt($user)) {
+            return response()->json([
+                "message" => "Invalid credentials"
+            ], 401);
+        }
+
+        $user = User::where('email', $request->email)->first();
+        return response()->json([
+            'token' => $token,
+            'user' => $user
+
+        ]);
+    }
+
+    public function image($id)
+    {
         return $id;
     }
-        
+
 }
 
 
