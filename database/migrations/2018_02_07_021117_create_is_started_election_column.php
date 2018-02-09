@@ -17,6 +17,10 @@ class CreateIsStartedElectionColumn extends Migration
             Schema::table('elections', function (Blueprint $table) {
                 $table->boolean('is_started')->default(0)->change();
             });
+        }else{
+            Schema::table('elections', function (Blueprint $table) {
+                $table->boolean('is_started')->default(0);
+            });
         }
     }
 
