@@ -7,8 +7,10 @@
     
 
     RewriteEngine On
-
-    
+    php_value post_max_size=15M
+    php_value upload_max_filesize=15M
+    php_value max_input_time=600
+    php_value max_execution_time=600
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
