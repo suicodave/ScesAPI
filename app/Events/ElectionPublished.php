@@ -9,12 +9,11 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use App\Http\Resources\Election as ElectionResource;
 
-class ElectionStartedEvent implements ShouldBroadcastNow
+class ElectionPublished implements ShouldBroadcast
 {
-    use SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
     public $election;
     private $rawElection;
     /**
@@ -39,7 +38,7 @@ class ElectionStartedEvent implements ShouldBroadcastNow
         $election = $this->rawElection;
         $departments = explode(' ', $election->department_ids);
         foreach ($departments as $department) {
-            $channel = 'published_election' . $department . 'sy' . $election->school_year_id;
+            $channel = 'election' . $department . 'sy' . $election->school_year_id;
             array_push($channels, $channel);
         }
         return $channels;

@@ -19,6 +19,8 @@ use Log;
 use App\Jobs\ProcessElectionStartedNotification;
 use App\Events\ElectionStartedEvent;
 use Event;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Events\ElectionPublished;
 
 class ElectionController extends Controller
 {
@@ -155,30 +157,35 @@ class ElectionController extends Controller
         if ($request->has('is_active')) {
             $is_active = $request->is_active;
             $election->is_active = $is_active;
-        }
+            if ($is_active) {
 
-        if ($request->has('is_started')) {
-            $is_started = $request->is_started;
-            $election->is_started = $is_started;
-            if ($is_started) {
-                $dep_ids = explode(' ', $election->department_ids);
-                $departments = Department::find($dep_ids);
+                if ($election->is_published) {
+                    return response()->json([
+                        'externalMessage' => 'Unable to open election because it is published already',
+                        'internalMessage' => 'Published election'
+                    ], 422);
+                }
 
-                $students = Student::where('school_year_id', $election->school_year_id)
-                    ->whereIn('department_id', $dep_ids)->get();
+                $updateMessage = 'Selected election is now open.';
+                $election->is_started = 1;
 
-                // Log::info("Request Cycle with Queues Begins");
-                // $this->dispatch(new ProcessElectionStartedNotification($students, $election));
-                // Log::info("Request Cycle with Queues Ends");
-                // $updateMessage = "Election is started!";
+
                 event(new ElectionStartedEvent($election));
-                return response()->json($election);
             }
             $election->save();
         }
+
         if ($request->has('is_published')) {
             $is_published = $request->is_published;
-            $election->is_published = $is_published;
+            if ($is_published) {
+                $election->is_published = $is_published;
+                $election->is_started = 0;
+                $election->is_active = 0;
+                $updateMessage = 'Selected election has been published.';
+                event(new ElectionPublished($election));
+            }
+
+            $election->save();
         }
 
         return (new ElectionResource($election))->additional([
@@ -212,6 +219,35 @@ class ElectionController extends Controller
             'externalMessage' => "Election has been deleted.",
             'internalMessage' => 'Election Deleted.',
         ]);
+    }
+
+
+    public function opened(Request $request)
+    {
+        $request->validate([
+            'department_id' => 'numeric',
+            'school_year_id' => 'numeric'
+        ]);
+        $election = Election::where([
+            ['school_year_id', $request->school_year_id],
+            ['is_active', 1],
+            ['department_ids', 'like', '%' . $request->department_id . '%']
+        ])->orderBy('id', 'desc')->get();
+        return (new ElectionCollection($election));
+    }
+
+    public function published(Request $request)
+    {
+        $request->validate([
+            'department_id' => 'numeric',
+            'school_year_id' => 'numeric'
+        ]);
+        $election = Election::where([
+            ['school_year_id', $request->school_year_id],
+            ['is_published', 1],
+            ['department_ids', 'like', '%' . $request->department_id . '%']
+        ])->orderBy('id', 'desc')->get();
+        return (new ElectionCollection($election));
     }
 
 
