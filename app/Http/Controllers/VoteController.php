@@ -4,9 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Vote;
 use Illuminate\Http\Request;
+use App\Election;
+use App\Http\Resources\Vote as VoteResource;
+use App\Http\Resources\CandidateCollection;
+use App\Http\Resources\VoteCollection;
+use App\Student;
 
 class VoteController extends Controller
 {
+
+    public function __construct()
+    {   
+        $this->middleware('jwtAuth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -17,69 +27,48 @@ class VoteController extends Controller
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+
+    public function myVotes(Election $election, Student $student)
     {
-        //
+        $votes = Vote::where([
+            ['election_id', $election->id],
+            ['student_id', $student->id]
+        ])->get();
+        return (new VoteCollection($votes));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function vote(Request $request)
     {
-        //
+        $this->authorize('vote', 'App\User');
+
+        $request->validate([
+            'election_id' => 'required |exists:elections,id| numeric',
+            'student_id' => 'required|unique:votes|numeric',
+            'candidate_id' => 'required|array',
+            'candidate.*' => 'numeric'
+        ]);
+
+        $election = Election::find($request->election_id);
+
+        $ids = $request->candidate_id;
+
+        foreach ($ids as $id) {
+            $vote = new Vote();
+            $vote->election_id = $request->election_id;
+            $vote->student_id = $request->student_id;
+            $vote->candidate_id = $id;
+            $vote->save();
+        }
+
+
+        return (new VoteResource($vote))->additional([
+            'externalMessage' => "You have successfully voted!",
+            'internalMessage' => 'Vote created.',
+        ]);
+
+
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Vote  $vote
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Vote $vote)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Vote  $vote
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Vote $vote)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Vote  $vote
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Vote $vote)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Vote  $vote
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Vote $vote)
-    {
-        //
-    }
 }

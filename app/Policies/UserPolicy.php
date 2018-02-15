@@ -234,6 +234,13 @@ class UserPolicy
 
     }
 
+    public function vote()
+    { //student
+
+        return $this->isStudent();
+
+    }
+
 
 
     ##################################################

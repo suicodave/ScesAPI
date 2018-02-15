@@ -166,8 +166,11 @@ Route::group(['prefix' => 'elections'], function () {
         Route::apiResource('partylists', 'PartylistController');
         Route::apiResource('votes', 'VoteController');
         Route::get('standings', 'CandidateController@standing');
+        Route::get('my-votes/{student}', 'VoteController@myVotes');
     });
 
     Route::get('opened', 'ElectionController@opened');
     Route::get('published', 'ElectionController@published');
+
+    Route::post('vote', 'VoteController@vote');
 });

@@ -4,6 +4,8 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+use App\Http\Resources\Candidate;
+
 class Vote extends Resource
 {
     /**
@@ -14,6 +16,9 @@ class Vote extends Resource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'id' => $this->id,
+            'candidate' => new Candidate($this->candidate)
+        ];
     }
 }
