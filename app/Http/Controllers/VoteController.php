@@ -9,12 +9,14 @@ use App\Http\Resources\Vote as VoteResource;
 use App\Http\Resources\CandidateCollection;
 use App\Http\Resources\VoteCollection;
 use App\Student;
+use App\Position;
+use App\Http\Resources\VoteStandingCollection;
 
 class VoteController extends Controller
 {
 
     public function __construct()
-    {   
+    {
         $this->middleware('jwtAuth');
     }
     /**
@@ -60,14 +62,38 @@ class VoteController extends Controller
             $vote->save();
         }
 
-
-        return (new VoteResource($vote))->additional([
+        return (new VoteStandingCollection($election, true))->additional([
             'externalMessage' => "You have successfully voted!",
             'internalMessage' => 'Vote created.',
         ]);
 
 
 
+
+    }
+
+    public function getVoterStatus(Election $election)
+    {
+        $department_ids = explode(' ', $election->department_ids);
+        $students = Student::where('school_year_id', $election->school_year_id)->whereIn('department_id', $department_ids)->withCount('votes')->orderBy('last_name', 'asc')->get();
+
+        $map_students = $students->map(function ($student) {
+            return [
+                'name' => $student['last_name'] . ', ' . $student['first_name'] . ' ' . $student['last_name'],
+                'vote' => $student['votes_count']
+            ];
+        });
+        return response()->json($map_students);
+    }
+
+    public function standing(Election $election, Request $request)
+    {
+        $request->validate([
+            'is_masked' => 'boolean'
+        ]);
+
+
+        return (new VoteStandingCollection($election, $request->is_masked));
     }
 
 

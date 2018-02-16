@@ -22,4 +22,8 @@ class Candidate extends Model
     {
         return $this->hasOne('App\Partylist', 'id', 'partylist_id');
     }
+    public function votes()
+    {
+        return $this->hasMany('App\Vote', 'candidate_id', 'id');
+    }
 }

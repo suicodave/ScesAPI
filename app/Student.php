@@ -38,5 +38,10 @@ class Student extends Model
         return $this->hasOne('App\User', 'id', 'processed_by');
     }
 
+    public function votes()
+    {
+        return $this->hasMany('App\Vote', 'student_id');
+    }
+
 
 }
