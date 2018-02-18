@@ -59,6 +59,7 @@ class VoteStandingCollection extends ResourceCollection
             });
         }
 
+
         return $map_position;
     }
 }

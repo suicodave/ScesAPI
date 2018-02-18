@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Department;
 use Illuminate\Http\Resources\Json\Resource;
 use App\Student;
+use App\Vote;
 
 class Election extends Resource
 {
@@ -21,7 +22,7 @@ class Election extends Resource
 
         $students = Student::where('school_year_id', $this->school_year_id)
             ->whereIn('department_id', $dep_ids)->count();
-
+        $accumulated_votes = Vote::where('election_id', $this->id)->groupBy('student_id')->count();
 
         return [
             'id' => $this->id,
@@ -30,8 +31,8 @@ class Election extends Resource
             'is_active' => $this->is_active,
             'is_published' => $this->is_published,
             'is_started' => $this->is_started,
-            'accumulated_votes' => 'asd',
-            'remaining_votes' => '12',
+            'accumulated_votes' => $accumulated_votes,
+            'remaining_votes' => $students - $accumulated_votes,
             'departments' => $departments,
             'school_year' => $this->school_year,
             'is_party_enabled' => $this->is_party_enabled,

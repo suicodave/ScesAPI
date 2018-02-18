@@ -154,6 +154,8 @@ class ElectionController extends Controller
             'is_started' => 'boolean'
         ]);
         $updateMessage = "Election has been updated.";
+
+        // open election
         if ($request->has('is_active')) {
             $is_active = $request->is_active;
             $election->is_active = $is_active;
@@ -170,11 +172,15 @@ class ElectionController extends Controller
                 $election->is_started = 1;
 
 
-                event(new ElectionStartedEvent($election));
+            } else {
+                $updateMessage = 'Selected election has been closed.';
             }
+
             $election->save();
+            event(new ElectionStartedEvent($election));
         }
 
+        // publish election
         if ($request->has('is_published')) {
             $is_published = $request->is_published;
             if ($is_published) {
