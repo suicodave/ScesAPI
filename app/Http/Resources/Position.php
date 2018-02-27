@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
+use App\Http\Resources\CandidateCollection;
 
 class Position extends Resource
 {
@@ -20,6 +21,8 @@ class Position extends Resource
             'number_of_winners' => $this->number_of_winners,
             'is_colrep' => $this->is_colrep,
             'election' => $this->election,
+            'rank' => $this->rank,
+            'candidates' => new CandidateCollection($this->candidates),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'college' => $this->when($this->is_colrep, $this->college)

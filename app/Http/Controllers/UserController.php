@@ -101,9 +101,14 @@ class UserController extends Controller
         }
 
         $user = User::where('email', $request->email)->first();
+        $getRoleModel = $user->role->model;
+        $profile = $getRoleModel::where('user_id', $user->id)->first();
+        $getResourceNamespace = explode('\\', $getRoleModel);
+        $resource = 'App\Http\Resources\\' . $getResourceNamespace[sizeof($getResourceNamespace) - 1];
+
         return response()->json([
             'token' => $token,
-            'user' => $user
+            'profile' => (new $resource($profile))
 
         ]);
     }

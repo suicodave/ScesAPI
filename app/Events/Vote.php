@@ -10,22 +10,26 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use App\Http\Resources\Election as ElectionResource;
 
-class ElectionStartedEvent implements ShouldBroadcastNow
+class Vote implements ShouldBroadcastNow
 {
-    use SerializesModels;
-    public $election;
-    private $rawElection;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
+    public $meta;
+    private $election;
+    private $standing;
+    private $standing_masked;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($election)
+    public function __construct($meta)
     {
-        $this->election = new ElectionResource($election);
-        $this->rawElection = $election;
+        $this->meta = $meta;
+        $this->election = $meta['election'];
+        $this->standing_masked = $meta['standing_masked'];
+        $this->standing = $meta['standing'];
+
     }
 
     /**
@@ -36,12 +40,17 @@ class ElectionStartedEvent implements ShouldBroadcastNow
     public function broadcastOn()
     {
         $channels = array();
-        $election = $this->rawElection;
+        $election = $this->election;
         $departments = explode(' ', $election->department_ids);
         foreach ($departments as $department) {
-            $channel = 'published_election' . $department . 'sy' . $election->school_year_id;
+            $channel = 'vote' . $department . 'sy' . $election->school_year_id;
             array_push($channels, $channel);
         }
         return $channels;
+    }
+
+    public function broadcastAs()
+    {
+        return 'vote' . $this->election->id;
     }
 }

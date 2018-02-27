@@ -33,7 +33,7 @@ class PositionController extends Controller
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy;
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
 
-        $position = Position::where('election_id', $election->id)->orderBy('id','desc');
+        $position = Position::where('election_id', $election->id)->orderBy('rank', 'asc');
         return (new PositionCollection($position->get()));
     }
 
@@ -54,12 +54,14 @@ class PositionController extends Controller
                 'max:60'
             ],
             'number_of_winners' => 'required|numeric|digits:1',
-            'is_colrep' => 'boolean'
+            'is_colrep' => 'boolean',
+            'rank' => 'required|numeric'
         ]);
 
         $position = new Position();
         $position->name = ucwords($request->name);
         $position->number_of_winners = $request->number_of_winners;
+        $position->rank = $request->rank;
         $position->is_colrep = $request->has('is_colrep') ? $request->is_colrep : 0;
         $election->positions()->save($position);
         return (new PositionResource($position))->additional([
@@ -98,16 +100,18 @@ class PositionController extends Controller
         $request->validate([
             'name' => 'max:60',
             'number_of_winners' => 'numeric|digits:1',
-            'is_colrep' => 'boolean'
+            'is_colrep' => 'boolean',
+            'rank' => 'required|numeric'
         ]);
         if ($election->id != $position->election_id) {
             throw new ModelNotFoundException;
         }
 
         $position->name = ($request->has('name')) ? ucwords($request->name) : $position->name;
+
         $position->number_of_winners = ($request->has('number_of_winners')) ? $request->number_of_winners : $position->number_of_winners;
         $position->is_colrep = ($request->has('is_col_rep')) ? $request->is_colrep : $position->is_colrep;
-
+        $position->rank = $request->rank;
         $position->save();
 
         return (new PositionResource($position))->additional([

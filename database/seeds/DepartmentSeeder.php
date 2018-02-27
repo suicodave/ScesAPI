@@ -21,7 +21,7 @@ class DepartmentSeeder extends Seeder
             $departments = [
                 'Elementary',
                 'Junior High',
-                'Señor High',
+                'Senior High',
                 'College'
             ];
             foreach ($departments as $key => $value) {

@@ -12,6 +12,7 @@ use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\App;
 
 class Handler extends ExceptionHandler
 {
@@ -83,9 +84,17 @@ class Handler extends ExceptionHandler
         }
 
         if ($exception instanceof QueryException) {
+
+            if (App::environment('local')) {
+                return response()->json([
+                    "externalMessage" => "There are no results for the given data.",
+                    "internalMessage" => $exception->getMessage()
+                ], 404);
+            }
+
             return response()->json([
                 "externalMessage" => "There are no results for the given data.",
-                "internalMessage" => "Query Exception"
+                "internalMessage" => "Not Found"
             ], 404);
         }
 
