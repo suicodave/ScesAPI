@@ -22,7 +22,7 @@ class Election extends Resource
 
         $students = Student::where('school_year_id', $this->school_year_id)
             ->whereIn('department_id', $dep_ids)->count();
-        $accumulated_votes = Vote::where('election_id', $this->id)->groupBy('student_id')->count();
+        $accumulated_votes = Vote::where('election_id', $this->id)->distinct('student_id')->count('student_id');
 
         return [
             'id' => $this->id,

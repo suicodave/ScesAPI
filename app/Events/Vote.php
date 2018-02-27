@@ -48,4 +48,9 @@ class Vote implements ShouldBroadcastNow
         }
         return $channels;
     }
+
+    public function broadcastAs()
+    {
+        return 'vote' . $this->election->id;
+    }
 }

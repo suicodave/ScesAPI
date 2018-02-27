@@ -73,7 +73,7 @@ class VoteController extends Controller
         }
 
         $meta = [
-            'election' => $election,
+            'election' => new ElectionResource($election),
             'standing_masked' => new VoteStandingCollection($election, 1),
             'standing' => new VoteStandingCollection($election, 0)
         ];
