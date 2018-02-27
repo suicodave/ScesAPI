@@ -15,11 +15,7 @@ class ChangeAdminsGenderColumn extends Migration
     {
         if (Schema::hasColumn('admins', 'Gender')) {
             Schema::table('admins', function (Blueprint $table) {
-                $table->string('gender')->nullable()->change();
-            });
-        } else {
-            Schema::table('admins', function (Blueprint $table) {
-                $table->string('gender')->nullable();
+                $table->renameColumn('Gender', 'gender');
             });
         }
     }
