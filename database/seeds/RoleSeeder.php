@@ -33,7 +33,8 @@ class RoleSeeder extends Seeder
         } else {
             foreach ($roles as $key => $value) {
                 factory(Role::class)->create([
-                    "name" => $value
+                    "name" => $key,
+                    "model" => $value
                 ]);
             }
         }
