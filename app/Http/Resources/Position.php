@@ -20,6 +20,7 @@ class Position extends Resource
             'name' => $this->name,
             'number_of_winners' => $this->number_of_winners,
             'is_colrep' => $this->is_colrep,
+            'college_id' => $this->col_id,
             'election' => $this->election,
             'rank' => $this->rank,
             'candidates' => new CandidateCollection($this->candidates),
