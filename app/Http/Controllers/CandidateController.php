@@ -14,6 +14,7 @@ use App\Jobs\UploadImage;
 use App\Http\Resources\Candidate as CandidateResource;
 use App\Http\Resources\CandidateCollection;
 use JWT;
+use Illuminate\Validation\Rule;
 
 class CandidateController extends Controller
 {
@@ -36,7 +37,7 @@ class CandidateController extends Controller
         $orderBy = $request->has('orderBy') ? $request->orderBy : $this->orderBy;
         $orderValue = $request->has('orderValue') ? $request->orderValue : $this->orderValue;
 
-        $candidate = Candidate::where('election_id', $election->id)->orderBy('id','desc');
+        $candidate = Candidate::where('election_id', $election->id)->orderBy('id', 'desc');
         return (new CandidateCollection($candidate->get()));
     }
 
@@ -53,7 +54,14 @@ class CandidateController extends Controller
 
         $this->authorize('storeCandidate', 'App\User');
         $request->validate([
-            'student_id' => 'required|filled|numeric',
+            'student_id' => [
+                'required',
+                'filled',
+                'numeric',
+                Rule::unique('candidates')->where(function ($query) use ($election) {
+                    return $query->where('election_id', $election->id);
+                })
+            ],
             'election_id' => 'required|filled|numeric',
             'position_id' => 'required|filled|numeric',
             'partylist_id' => 'filled|numeric',

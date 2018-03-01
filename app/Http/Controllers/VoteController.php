@@ -14,6 +14,7 @@ use App\Http\Resources\VoteStandingCollection;
 
 use App\Http\Resources\Election as ElectionResource;
 use App\Events\Vote as VoteEvent;
+use Illuminate\Validation\Rule;
 
 class VoteController extends Controller
 {
@@ -48,7 +49,14 @@ class VoteController extends Controller
 
         $request->validate([
             'election_id' => 'required |exists:elections,id| numeric',
-            'student_id' => 'required|unique:votes|numeric',
+            'student_id' => [
+                'required',
+                'unique:votes',
+                'numeric',
+                Rule::unique('votes')->where(function ($query) use ($request) {
+                    return $query->where('election_id', $request->election_id);
+                })
+            ],
             'candidate_id' => 'required|array',
             'candidate.*' => 'numeric'
         ]);
