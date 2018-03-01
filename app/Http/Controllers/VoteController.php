@@ -48,10 +48,8 @@ class VoteController extends Controller
         $this->authorize('vote', 'App\User');
 
         $request->validate([
-            'election_id' => 'required |exists:elections,id| numeric',
             'student_id' => [
                 'required',
-                'unique:votes',
                 'numeric',
                 Rule::unique('votes')->where(function ($query) use ($election) {
                     return $query->where('election_id', $election->id);
@@ -60,8 +58,6 @@ class VoteController extends Controller
             'candidate_id' => 'required|array',
             'candidate.*' => 'numeric'
         ]);
-
-        $election = Election::find($request->election_id);
 
         if (!$election->is_active) {
             return response()->json([
