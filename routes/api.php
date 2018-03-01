@@ -168,10 +168,10 @@ Route::group(['prefix' => 'elections'], function () {
         Route::get('standings', 'VoteController@standing');
         Route::get('my-votes/{student}', 'VoteController@myVotes');
         Route::get('voter-status', 'VoteController@getVoterStatus');
+        Route::post('vote', 'VoteController@vote');
     });
 
     Route::get('opened', 'ElectionController@opened');
     Route::get('published', 'ElectionController@published');
 
-    Route::post('vote', 'VoteController@vote');
 });

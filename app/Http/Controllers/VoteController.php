@@ -43,7 +43,7 @@ class VoteController extends Controller
         return (new VoteCollection($votes));
     }
 
-    public function vote(Request $request)
+    public function vote(Request $request, Election $election)
     {
         $this->authorize('vote', 'App\User');
 
@@ -53,8 +53,8 @@ class VoteController extends Controller
                 'required',
                 'unique:votes',
                 'numeric',
-                Rule::unique('votes')->where(function ($query) use ($request) {
-                    return $query->where('election_id', $request->election_id);
+                Rule::unique('votes')->where(function ($query) use ($election) {
+                    return $query->where('election_id', $election->id);
                 })
             ],
             'candidate_id' => 'required|array',
