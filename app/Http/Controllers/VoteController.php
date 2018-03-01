@@ -70,7 +70,7 @@ class VoteController extends Controller
 
         foreach ($ids as $id) {
             $vote = new Vote();
-            $vote->election_id = $request->election_id;
+            $vote->election_id = $election->id;
             $vote->student_id = $request->student_id;
             $vote->candidate_id = $id;
             $vote->save();
